@@ -1,0 +1,22 @@
+name: TS types
+run-name: Checking types for build...
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - master
+jobs:
+  Check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Type check
+        run: pnpm check
+      - run: echo "Result / ${{ job.status }}."
