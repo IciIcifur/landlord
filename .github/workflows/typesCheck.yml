@@ -1,6 +1,12 @@
 name: TS types
 run-name: Checking types for build...
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - master
 jobs:
   Check:
     runs-on: ubuntu-latest
