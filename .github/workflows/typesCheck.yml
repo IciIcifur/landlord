@@ -1,6 +1,6 @@
 name: TS types
 run-name: Checking types for build...
-on: [push]
+on: [push, pull_request]
 jobs:
   Check:
     runs-on: ubuntu-latest
