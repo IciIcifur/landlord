@@ -3,7 +3,7 @@ run-name: Checking types for build...
 on:
   push:
     branches:
-      - '**'
+      - "**"
   pull_request:
     branches:
       - master
