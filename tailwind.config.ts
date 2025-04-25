@@ -1,23 +1,23 @@
-import type {Config} from 'tailwindcss';
-import {heroui} from '@heroui/theme';
+import type { Config } from "tailwindcss";
+import { heroui } from "@heroui/theme";
 
 export default {
-    content: [
-        './(pages)/**/*.{js,ts,jsx,tsx,mdx}',
-        './components/**/*.{js,ts,jsx,tsx,mdx}',
-        './app/**/*.{js,ts,jsx,tsx,mdx}',
-        '../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}',
-    ],
-    theme: {
-        extend: {},
-    },
-    darkMode: 'class',
-    plugins: [
-        heroui({
-            addCommonColors: true,
-            themes: {
-                light: {
-                    /*
+  content: [
+    "./(pages)/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  darkMode: "class",
+  plugins: [
+    heroui({
+      addCommonColors: true,
+      themes: {
+        light: {
+          /*
                     colors: {
                         background: '#fafafa',
                         foreground: '#18181b',
@@ -27,15 +27,15 @@ export default {
                         warning: warning,
                         success: success,
                     },*/
-                },
-                dark: {
-                    /*
+        },
+        dark: {
+          /*
                     colors: {
                         background: '#18181b',
                         foreground: '#fafafa',
                     },*/
-                },
-            },
-        }),
-    ],
+        },
+      },
+    }),
+  ],
 } satisfies Config;
