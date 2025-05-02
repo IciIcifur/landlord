@@ -5,7 +5,7 @@ import { Providers } from "@/app/providers";
 import { montserrat } from "@/public/fonts/fonts";
 
 export const metadata: Metadata = {
-  title: "Landlord",
+  title: "LandLord",
   description: "A web-app for rental tracking",
 };
 
@@ -15,7 +15,7 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="ru">
       <body className={`${montserrat.className} antialiased`}>
         <Providers>{children}</Providers>
       </body>
