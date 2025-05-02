@@ -37,7 +37,7 @@ pnpm start
 - / - _MainPage_
 - /login - _Login page_
 - /users - _Users page_
-- /<object_id> - _Object's page_
+- /<object*id> - \_Object's page*
 - /api - _начальный роут для эндпоинтов_
 
 ### Сторы
