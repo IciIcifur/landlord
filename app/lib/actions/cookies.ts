@@ -1,13 +1,13 @@
-"use server";
+'use server';
 
 export function SetCookie(
   userId: string,
-  userRole: "admin" | "client",
+  userRole: 'admin' | 'client',
   days: number = 7,
 ): void {
   const date = new Date();
   date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-  const expires = "expires=" + date.toUTCString();
+  const expires = 'expires=' + date.toUTCString();
   document.cookie = `userId=${userId}; ${expires}; path=/`;
   document.cookie = `userRole=${userRole}; ${expires}; path=/`;
 }

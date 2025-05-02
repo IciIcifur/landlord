@@ -1,5 +1,5 @@
-import { cookies } from "next/headers";
-import GetUserRole from "@/app/lib/utils/getUserRole";
+import { cookies } from 'next/headers';
+import GetUserRole from '@/app/lib/utils/getUserRole';
 
 interface ObjectPageProps {
   object_id: string;
@@ -16,7 +16,7 @@ export default async function ObjectPage({
   params: Promise<ObjectPageProps>;
 }) {
   const userRole = await GetUserRole();
-  const userId = (await cookies()).get("userId" as any)?.value;
+  const userId = (await cookies()).get('userId' as any)?.value;
 
   const object = await getObject(userId, (await params).object_id);
 
