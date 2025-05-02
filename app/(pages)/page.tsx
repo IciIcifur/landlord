@@ -1,5 +1,5 @@
-import { cookies } from "next/headers";
-import GetUserRole from "@/app/lib/utils/getUserRole";
+import { cookies } from 'next/headers';
+import GetUserRole from '@/app/lib/utils/getUserRole';
 
 async function getObjects(id: string) {
   // get request for objects for this userId
@@ -7,7 +7,7 @@ async function getObjects(id: string) {
 
 export default async function MainPage() {
   const userRole = await GetUserRole();
-  const userId = (await cookies()).get("userId" as any)?.value;
+  const userId = (await cookies()).get('userId' as any)?.value;
 
-  return <p>Object list here</p>;
+  return <div>Object list here</div>;
 }
