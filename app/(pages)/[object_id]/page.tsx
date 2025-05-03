@@ -1,24 +1,34 @@
-import { cookies } from 'next/headers';
-import GetUserRole from '@/app/lib/utils/getUserRole';
+import { cookies } from "next/headers"
+import GetUserRole from "@/app/lib/utils/getUserRole"
+import ObjectDetail from "@/app/ui/objects/objectDetail"
 
 interface ObjectPageProps {
-  object_id: string;
+  object_id: string
 }
 
 async function getObject(userId?: string, objectId?: string) {
-  // get request for object for this userId
-  return objectId;
+  const objects = [
+    { id: "1", name: "Проект 1", price: 5000 },
+    { id: "2", name: "Проект 2", price: 7500 },
+    { id: "3", name: "Проект 3", price: 3200 },
+    { id: "4", name: "Проект 4", price: 9800 },
+    { id: "5", name: "Проект 5", price: 6400 },
+  ]
+
+  return objects.find((obj) => obj.id === objectId) || null
 }
 
 export default async function ObjectPage({
   params,
 }: {
-  params: Promise<ObjectPageProps>;
+  params: Promise<ObjectPageProps>
 }) {
-  const userRole = await GetUserRole();
-  const userId = (await cookies()).get('userId' as any)?.value;
+  const userRole = await GetUserRole()
+  const cookieStore = await cookies()
+  const userId = cookieStore.get("userId")?.value
 
-  const object = await getObject(userId, (await params).object_id);
+  const { object_id } = await params
+  const object = await getObject(userId, object_id)
 
-  return <p>Object {object} properties here</p>;
+  return <ObjectDetail object={object} />
 }
