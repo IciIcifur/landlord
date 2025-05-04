@@ -21,14 +21,15 @@ async function getObject(userId?: string, objectId?: string) {
 export default async function ObjectPage({
   params,
 }: {
-  params: Promise<ObjectPageProps>
+  params: ObjectPageProps
 }) {
-  const userRole = await GetUserRole()
+  await GetUserRole()
+
   const cookieStore = await cookies()
   const userId = cookieStore.get("userId")?.value
 
-  const { object_id } = await params
-  const object = await getObject(userId, object_id)
+  const resolvedParams = await Promise.resolve(params)
+  const object = await getObject(userId, resolvedParams.object_id)
 
   return <ObjectDetail object={object} />
 }
