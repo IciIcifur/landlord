@@ -1,4 +1,4 @@
-import { action, makeAutoObservable, observable } from 'mobx-react-lite/lib';
+import { action, makeAutoObservable, observable } from 'mobx';
 import { User, UserRole } from '@/app/lib/utils/definitions';
 
 class UserStore {
@@ -14,7 +14,7 @@ class UserStore {
     });
   }
 
-  setUser(email, password) {
+  setUser(email: string, password: string): void {
     // TODO: get id and role via getRequest
     this.user = { id: 'newUser', email, password, role: UserRole.ADMIN };
     this.isAuthenticated = true;

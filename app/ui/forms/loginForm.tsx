@@ -1,13 +1,15 @@
 'use client';
 
-import { Input } from '@heroui/input';
-import { Form } from '@heroui/form';
-import { Button } from '@heroui/button';
-import { ReactNode, useEffect, useState } from 'react';
-import { EyeClosedIcon, EyeIcon } from 'lucide-react';
-import CheckFormFields from '@/app/lib/utils/checkFormFields';
-import { LoginFormSchema } from '@/app/lib/utils/zodSchemas';
-import { useRouter } from 'next/navigation';
+import { Input } from "@heroui/input"
+import { Form } from "@heroui/form"
+import { Button } from "@heroui/button"
+import { type ReactNode, useEffect, useState, type FormEvent } from "react"
+import { EyeIcon as EyeClosedIcon, EyeIcon } from "lucide-react"
+import CheckFormFields from "@/app/lib/utils/checkFormFields"
+import { LoginFormSchema } from "@/app/lib/utils/zodSchemas"
+import { useRouter } from "next/navigation"
+
+type FormErrors = Record<string, string>
 
 export default function LoginForm() {
   const router = useRouter();
@@ -24,8 +26,8 @@ export default function LoginForm() {
     );
   }, [email, password, setErrors]);
 
-  const onSubmit = (e) => {
-    e.preventDefault();
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     if (!Object.keys(errors).length) {
       setIsLoading(true);
       // TODO: server request
