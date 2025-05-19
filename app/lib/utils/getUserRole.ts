@@ -1,13 +1,15 @@
+import 'server-only';
 import { UserRole } from '@/app/lib/utils/definitions';
 import { cookies } from 'next/headers';
-import 'server-only';
 
 export default async function GetUserRole(): Promise<UserRole | undefined> {
-  const role = (await cookies()).get('userRole' as any)?.value;
-  switch (role) {
-    case 'admin':
+  const session: any = (await cookies()).get('session' as any)?.value;
+
+  const role = JSON.parse(session).userRole;
+  switch (UserRole[role]) {
+    case 'ADMIN':
       return UserRole.ADMIN;
-    case 'client':
+    case 'CLIENT':
       return UserRole.CLIENT;
     default:
       return undefined;
