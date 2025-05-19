@@ -9,7 +9,7 @@ export const LoginFormSchema = z.object({
   email: z
     .string()
     .nonempty('Адрес эл. почты обязателен')
-    .max(100, 'Адрес эл. почты не может быть длинее 100 символов')
+    .max(100, 'Адрес эл. почты не может быть длиннее 100 символов')
     .email('Введите корректный адрес эл. почты')
     .regex(emailRegex, 'Введите корректный адрес эл. почты'),
 
@@ -21,4 +21,21 @@ export const LoginFormSchema = z.object({
     .regex(passwordRegex, 'Введите корректный пароль'),
 });
 
-export type loginForm = z.infer<typeof LoginFormSchema>;
+export const EditObjectFormSchema = z.object({
+  name: z
+    .string()
+    .nonempty('Название объекта обязательно')
+    .max(32, 'Название объекта не может быть длинее 32 символов')
+    .regex(commonRegex, 'Введите корректное название'),
+
+  address: z
+    .string()
+    .min(10, 'Адрес объекта обязателен и не может быть короче 10 символов')
+    .max(100, 'Адрес объекта не может быть длиннее 100 символов')
+    .regex(commonRegex, 'Введите корректный адрес'),
+
+  price: z
+    .number()
+    .min(0, 'Стоимость должна быть положительной')
+    .max(1000000000000, 'Стоимость объекта не может превышать 1 млрд. руб.'),
+});

@@ -5,114 +5,144 @@ import { Button } from '@heroui/button';
 import Link from 'next/link';
 import { PencilIcon, PlusIcon, TrashIcon, UsersIcon } from 'lucide-react';
 import { UserRole } from '@/app/lib/utils/definitions';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useDisclosure } from '@heroui/modal';
+import EditObjectModal from '@/app/ui/modals/editObjectModal';
+import AreYouSureModal from '@/app/ui/modals/areYouSureModal';
+import objectsStore from '@/app/stores/objectsStore';
+import userStore from '@/app/stores/userStore';
+import { observer } from 'mobx-react-lite';
 
-interface ObjectProps {
-  id: string;
-  name: string;
-  price: number;
-}
+const ObjectsList = observer(() => {
+  const [activeObjectId, setActiveObjectId] = useState<string | undefined>(
+    undefined,
+  );
+  const {
+    isOpen: isEditOpen,
+    onOpen: onEditOpen,
+    onOpenChange: onEditOpenChange,
+  } = useDisclosure();
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onDeleteOpen,
+    onOpenChange: onDeleteOpenChange,
+  } = useDisclosure();
 
-interface ObjectsListProps {
-  objects: ObjectProps[];
-  userRole: UserRole | undefined;
-}
-
-export default function ObjectsList({ objects, userRole }: ObjectsListProps) {
-  const [isAdmin, setIsAdmin] = useState(userRole === UserRole.ADMIN);
-
-  useEffect(() => {
-    setIsAdmin(userRole === UserRole.ADMIN);
-  }, [userRole, setIsAdmin]);
-
-  const handleEdit = (id: string) => {
-    console.log(`Редактирование проекта ${id}`);
-  };
-
-  const handleDelete = (id: string) => {
-    console.log(`Удаление проекта ${id}`);
+  const handleDelete = () => {
+    console.log('Delete object: ', activeObjectId);
+    onDeleteOpenChange();
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
-      {isAdmin && (
-        <div className="mb-4 flex items-center justify-between gap-2">
-          <Button
-            color="primary"
-            startContent={<PlusIcon className="size-4" />}
-          >
-            Добавить новый проект
-          </Button>
+    <>
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
+        {userStore.user?.role === UserRole.ADMIN && (
+          <div className="mb-4 flex items-center justify-between gap-2">
+            <Button
+              color="primary"
+              startContent={<PlusIcon className="size-4" />}
+            >
+              Добавить новый проект
+            </Button>
 
-          <Button
-            as={Link}
-            href="/users"
-            color="default"
-            variant="flat"
-            startContent={<UsersIcon className="size-4" />}
-          >
-            Управление пользователями
-          </Button>
-        </div>
-      )}
+            <Button
+              as={Link}
+              href="/users"
+              color="default"
+              variant="flat"
+              startContent={<UsersIcon className="size-4" />}
+            >
+              Управление пользователями
+            </Button>
+          </div>
+        )}
 
-      {objects.map((object) => (
-        <Card key={object.id} className="w-full">
-          <CardBody className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-medium">{object.name}</h3>
-                <p className="text-default-500">ID: {object.id}</p>
-                <p className="mt-1 font-medium text-primary">
-                  {object.price} ₽
-                </p>
+        {objectsStore.allObjects.map((object) => (
+          <Card key={object.id} className="w-full">
+            <CardBody className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-medium">{object.name}</h3>
+                  <p className="text-default-500">ID: {object.id}</p>
+                  <p className="mt-1 font-medium text-primary">
+                    {object.price} ₽
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    as={Link}
+                    href={`/${object.id}`}
+                    color="primary"
+                    size="sm"
+                    variant="flat"
+                  >
+                    Подробнее
+                  </Button>
+
+                  {userStore.user?.role === UserRole.ADMIN && (
+                    <>
+                      <Button
+                        color="default"
+                        size="sm"
+                        variant="flat"
+                        isIconOnly
+                        onPress={() => {
+                          setActiveObjectId(object.id);
+                          onEditOpen();
+                        }}
+                      >
+                        <PencilIcon className="size-4" />
+                      </Button>
+                      <Button
+                        color="danger"
+                        size="sm"
+                        variant="flat"
+                        isIconOnly
+                        onPress={() => {
+                          setActiveObjectId(object.id);
+                          onDeleteOpen();
+                        }}
+                      >
+                        <TrashIcon className="size-4" />
+                      </Button>
+                    </>
+                  )}
+                </div>
               </div>
-              <div className="flex gap-2">
-                <Button
-                  as={Link}
-                  href={`/${object.id}`}
-                  color="primary"
-                  size="sm"
-                  variant="flat"
-                >
-                  Подробнее
-                </Button>
+            </CardBody>
+          </Card>
+        ))}
 
-                {isAdmin && (
-                  <>
-                    <Button
-                      color="default"
-                      size="sm"
-                      variant="flat"
-                      isIconOnly
-                      onPress={() => handleEdit(object.id)}
-                    >
-                      <PencilIcon className="size-4" />
-                    </Button>
-                    <Button
-                      color="danger"
-                      size="sm"
-                      variant="flat"
-                      isIconOnly
-                      onPress={() => handleDelete(object.id)}
-                    >
-                      <TrashIcon className="size-4" />
-                    </Button>
-                  </>
-                )}
-              </div>
-            </div>
-          </CardBody>
-        </Card>
-      ))}
-
-      {objects.length === 0 && (
-        <Card className="w-full">
-          <CardBody className="p-6 text-center">
-            <p className="text-default-500">Строительные проекты не найдены.</p>
-          </CardBody>
-        </Card>
+        {!objectsStore.allObjects.length && (
+          <Card className="w-full">
+            <CardBody className="p-6 text-center">
+              <p className="text-default-500">
+                Строительные проекты не найдены.
+              </p>
+            </CardBody>
+          </Card>
+        )}
+      </div>
+      {isEditOpen && (
+        <EditObjectModal
+          object={objectsStore.allObjects.find(
+            (object) => object.id === activeObjectId,
+          )}
+          isOpen={isEditOpen}
+          onOpenChange={onEditOpenChange}
+        />
       )}
-    </div>
+      {isDeleteOpen && (
+        <AreYouSureModal
+          header={`Вы уверены, что хотите удалить "${objectsStore.allObjects.find((object) => object.id === activeObjectId)?.name}"?`}
+          description="Объект будет удален без возможности восстановления данных о нем."
+          onSubmit={handleDelete}
+          isOpen={isDeleteOpen}
+          onOpenChange={onDeleteOpenChange}
+        />
+      )}
+    </>
   );
-}
+});
+
+export default ObjectsList;

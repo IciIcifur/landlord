@@ -15,7 +15,7 @@ class ObjectsStore {
 
   setAllObjects = (objects: any[]) => {
     // TODO: parse objects via zod
-    this.allObjects = objects;
+    this.allObjects = [...objects];
   };
 
   setActiveObject = (object: any) => {

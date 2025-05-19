@@ -23,7 +23,7 @@ async function getObject(objectId?: string) {
 export default async function ObjectPage({
   params,
 }: {
-  params: ObjectPageProps;
+  params: Promise<ObjectPageProps>;
 }) {
   const { object_id } = await params;
   const objectData = await getObject(object_id);
