@@ -36,7 +36,7 @@ export default function ObjectsList({ objects, userRole }: ObjectsListProps) {
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
       {isAdmin && (
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex items-center justify-between gap-2">
           <Button
             color="primary"
             startContent={<PlusIcon className="size-4" />}
