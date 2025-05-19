@@ -1,38 +1,46 @@
-"use client"
+'use client';
 
-import { Card, CardBody } from "@heroui/card"
-import { Button } from "@heroui/button"
-import Link from "next/link"
-import { PencilIcon, TrashIcon, PlusIcon, UsersIcon } from "lucide-react"
-import { UserRole } from "@/app/lib/utils/definitions"
+import { Card, CardBody } from '@heroui/card';
+import { Button } from '@heroui/button';
+import Link from 'next/link';
+import { PencilIcon, PlusIcon, TrashIcon, UsersIcon } from 'lucide-react';
+import { UserRole } from '@/app/lib/utils/definitions';
+import { useEffect, useState } from 'react';
 
 interface ObjectProps {
-  id: string
-  name: string
-  price: number
+  id: string;
+  name: string;
+  price: number;
 }
 
 interface ObjectsListProps {
-  objects: ObjectProps[]
-  userRole: UserRole | undefined
+  objects: ObjectProps[];
+  userRole: UserRole | undefined;
 }
 
 export default function ObjectsList({ objects, userRole }: ObjectsListProps) {
-  const isAdmin = userRole === UserRole.ADMIN
+  const [isAdmin, setIsAdmin] = useState(userRole === UserRole.ADMIN);
+
+  useEffect(() => {
+    setIsAdmin(userRole === UserRole.ADMIN);
+  }, [userRole, setIsAdmin]);
 
   const handleEdit = (id: string) => {
-    console.log(`Редактирование проекта ${id}`)
-  }
+    console.log(`Редактирование проекта ${id}`);
+  };
 
   const handleDelete = (id: string) => {
-    console.log(`Удаление проекта ${id}`)
-  }
+    console.log(`Удаление проекта ${id}`);
+  };
 
   return (
-    <div className="w-full flex flex-col gap-4 max-w-2xl mx-auto">
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
       {isAdmin && (
-        <div className="flex justify-between items-center mb-4">
-          <Button color="primary" startContent={<PlusIcon className="size-4" />}>
+        <div className="mb-4 flex items-center justify-between">
+          <Button
+            color="primary"
+            startContent={<PlusIcon className="size-4" />}
+          >
             Добавить новый проект
           </Button>
 
@@ -51,23 +59,43 @@ export default function ObjectsList({ objects, userRole }: ObjectsListProps) {
       {objects.map((object) => (
         <Card key={object.id} className="w-full">
           <CardBody className="p-4">
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-medium">{object.name}</h3>
                 <p className="text-default-500">ID: {object.id}</p>
-                <p className="text-primary font-medium mt-1">{object.price} ₽</p>
+                <p className="mt-1 font-medium text-primary">
+                  {object.price} ₽
+                </p>
               </div>
               <div className="flex gap-2">
-                <Button as={Link} href={`/${object.id}`} color="primary" size="sm" variant="flat">
+                <Button
+                  as={Link}
+                  href={`/${object.id}`}
+                  color="primary"
+                  size="sm"
+                  variant="flat"
+                >
                   Подробнее
                 </Button>
 
                 {isAdmin && (
                   <>
-                    <Button color="default" size="sm" variant="flat" isIconOnly onPress={() => handleEdit(object.id)}>
+                    <Button
+                      color="default"
+                      size="sm"
+                      variant="flat"
+                      isIconOnly
+                      onPress={() => handleEdit(object.id)}
+                    >
                       <PencilIcon className="size-4" />
                     </Button>
-                    <Button color="danger" size="sm" variant="flat" isIconOnly onPress={() => handleDelete(object.id)}>
+                    <Button
+                      color="danger"
+                      size="sm"
+                      variant="flat"
+                      isIconOnly
+                      onPress={() => handleDelete(object.id)}
+                    >
                       <TrashIcon className="size-4" />
                     </Button>
                   </>
@@ -86,5 +114,5 @@ export default function ObjectsList({ objects, userRole }: ObjectsListProps) {
         </Card>
       )}
     </div>
-  )
+  );
 }

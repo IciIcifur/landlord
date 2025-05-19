@@ -1,15 +1,16 @@
 'use client';
 
-import { Input } from "@heroui/input"
-import { Form } from "@heroui/form"
-import { Button } from "@heroui/button"
-import { type ReactNode, useEffect, useState, type FormEvent } from "react"
-import { EyeIcon as EyeClosedIcon, EyeIcon } from "lucide-react"
-import CheckFormFields from "@/app/lib/utils/checkFormFields"
-import { LoginFormSchema } from "@/app/lib/utils/zodSchemas"
-import { useRouter } from "next/navigation"
-
-type FormErrors = Record<string, string>
+import { Input } from '@heroui/input';
+import { Form } from '@heroui/form';
+import { Button } from '@heroui/button';
+import { type FormEvent, type ReactNode, useEffect, useState } from 'react';
+import { EyeIcon as EyeClosedIcon, EyeIcon } from 'lucide-react';
+import CheckFormFields from '@/app/lib/utils/checkFormFields';
+import { LoginFormSchema } from '@/app/lib/utils/zodSchemas';
+import { useRouter } from 'next/navigation';
+import { setCookie } from '@/app/lib/actions/handleCookies';
+import { User, UserRole } from '@/app/lib/utils/definitions';
+import userStore from '@/app/stores/userStore';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -26,13 +27,19 @@ export default function LoginForm() {
     );
   }, [email, password, setErrors]);
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     if (!Object.keys(errors).length) {
       setIsLoading(true);
       // TODO: server request
       // TODO: set user id in cookies and store
-      console.log('submit');
+      const user: User = { id: 'user1', email, role: UserRole.ADMIN };
+
+      await setCookie(user.id, user.role);
+      userStore.setUser(user);
+
+      setIsLoading(false);
+
       router.push('/');
     }
   };

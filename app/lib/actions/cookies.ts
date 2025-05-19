@@ -1,18 +1,32 @@
-'use server';
+import 'server-only';
+import { cookies } from 'next/headers';
+import { UserRole } from '@/app/lib/utils/definitions';
 
-export function SetCookie(
+export async function SetCookie(
   userId: string,
-  userRole: 'admin' | 'client',
+  userRole: UserRole,
   days: number = 7,
-): void {
-  const date = new Date();
-  date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-  const expires = 'expires=' + date.toUTCString();
-  document.cookie = `userId=${userId}; ${expires}; path=/`;
-  document.cookie = `userRole=${userRole}; ${expires}; path=/`;
+) {
+  const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+  const cookieStore = await cookies();
+
+  const session = { userId: userId, userRole: userRole };
+
+  cookieStore.set(
+    'session' as any,
+    JSON.stringify(session) as any,
+    {
+      httpOnly: true,
+      secure: true,
+      expires: expires as any,
+      sameSite: 'lax',
+      path: '/',
+    } as any,
+  );
 }
 
-export function ClearCookie(): void {
-  document.cookie = `userId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
-  document.cookie = `userRole=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
+export async function ClearCookie() {
+  const cookieStore = await cookies();
+
+  cookieStore.delete('session' as any);
 }
