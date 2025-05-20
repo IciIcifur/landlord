@@ -11,7 +11,7 @@ export interface Object {
   square: number;
   description?: string;
   records: Record[];
-  dataForSale: DataForSale[];
+  dataForSale: DataForSale;
 }
 
 export interface Record {
