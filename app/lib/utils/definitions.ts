@@ -3,13 +3,12 @@ export interface User {
   email: string;
   password: string;
   role: UserRole;
-  object: Object[];
 }
 
 export interface Object {
   id: string; 
   name: string;
-  size: number;
+  square: number;
   description?: string;
   records: Record[];
   dataForSale: DataForSale[];
