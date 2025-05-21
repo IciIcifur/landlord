@@ -1,22 +1,22 @@
-import { model, models, Schema } from 'mongoose';
+import {model, models, Schema} from 'mongoose';
 
 const ObjectSchema = new Schema({
-    id: { 
-        type: String, 
-        required: true, 
-        unique: true, 
+    id: {
+        type: String,
+        required: true,
+        unique: true,
     },
-    name: { 
-        type: String, 
+    name: {
+        type: String,
         required: true,
     },
-    size: { 
+    size: {
         type: Number,
-        min: [0, 'Площадь не может быть отрицательной'], 
-        required: true, 
+        min: [0, 'Площадь не может быть отрицательной'],
+        required: true,
     },
-    description: { 
-        type: String, 
+    description: {
+        type: String,
     },
     recordId: {
         type: String,

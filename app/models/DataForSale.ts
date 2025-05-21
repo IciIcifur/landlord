@@ -1,14 +1,14 @@
-import { model, models, Schema } from 'mongoose';
+import {model, models, Schema} from 'mongoose';
 
 const DataForSaleSchema = new Schema({
-    id: { 
-        type: String, 
-        required: true, 
+    id: {
+        type: String,
+        required: true,
         unique: true,
     },
-    objectId: { 
-        type: String, 
-        required: true, 
+    objectId: {
+        type: String,
+        required: true,
         ref: 'Object',
     },
     recordId: {
@@ -44,7 +44,7 @@ const DataForSaleSchema = new Schema({
     },
     percentPerYear: {
         type: Number,
-    }, 
+    },
 });
 
 const DataForSaleModel = models.DataForSale || model('DataForSale', DataForSaleSchema);
