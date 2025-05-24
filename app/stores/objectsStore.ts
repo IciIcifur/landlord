@@ -22,6 +22,19 @@ class ObjectsStore {
     // TODO: parse object via zod
     this.activeObject = object;
   };
+
+  updateObjectById = (objectId: string, newAttrs: any) => {
+    const objectIndex = this.allObjects.findIndex(
+      (object) => object.id === objectId,
+    );
+    if (objectIndex >= 0) {
+      this.allObjects[objectIndex] = {
+        ...this.allObjects[objectIndex],
+        ...newAttrs,
+      };
+      // TODO: post request
+    } else console.error('Этого объекта не существует.');
+  };
 }
 
 const objectsStore = new ObjectsStore();
