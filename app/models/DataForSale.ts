@@ -26,24 +26,31 @@ const DataForSaleSchema = new Schema({
     },
     countOfMonth: {
         type: Number,
+        default: null,
     },
     profitPerMonth: {
         type: Number,
+        default: null,
     },
     totalProfit: {
         type: Number,
+        default: null,
     },
     payback5Year: {
         type: Number,
+        default: null,
     },
     payback7Year: {
         type: Number,
+        default: null,
     },
     payback10Year: {
         type: Number,
+        default: null,
     },
     percentPerYear: {
         type: Number,
+        default: null,
     },
 });
 

@@ -17,16 +17,21 @@ const ObjectSchema = new Schema({
     },
     description: {
         type: String,
+        default: null,
     },
     recordId: {
         type: String,
-        required: true,
         ref: 'Record',
+        default: null,
     },
     dataForSale: {
         type: String,
-        required: true,
         ref: 'DataForSale',
+        default: null,
+    },
+    users: {
+        type: [{type: String}],
+        default: [],
     },
 });
 

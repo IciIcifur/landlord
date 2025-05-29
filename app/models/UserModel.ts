@@ -32,8 +32,8 @@ const UserSchema = new Schema({
     },
     objectId: {
         type: String,
-        required: true,
         ref: 'Object',
+        default: null,
     },
 });
 
