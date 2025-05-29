@@ -12,6 +12,7 @@ export interface Object {
     description?: string;
     records: Record[];
     dataForSale: DataForSale;
+    users?: {id:string, email:string}[];
 }
 
 export interface Record {
