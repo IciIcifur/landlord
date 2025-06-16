@@ -10,7 +10,7 @@ import { Input } from '@heroui/input';
 import { useEffect, useState } from 'react';
 import { Form } from '@heroui/form';
 import CheckFormFields from '@/app/lib/utils/checkFormFields';
-import { EditObjectFormSchema } from '@/app/lib/utils/zodSchemas';
+import { objectMainFormSchema } from '@/app/lib/utils/zodSchemas';
 import { NumberInput } from '@heroui/number-input';
 import { RentalObject } from '@/app/lib/utils/definitions';
 import objectsStore from '@/app/stores/objectsStore';
@@ -35,7 +35,7 @@ export default function EditObjectModal({
     setErrors(
       CheckFormFields(
         { name: name, address: address, square: square },
-        EditObjectFormSchema,
+        objectMainFormSchema,
       ),
     );
   }, [name, address, square, setErrors]);
@@ -76,7 +76,7 @@ export default function EditObjectModal({
               isRequired
               value={square}
               onValueChange={setSquare}
-              errorMessage={errors.price}
+              errorMessage={errors.square}
               label="Площадь объекта (м²)"
               placeholder="85"
               name="square"

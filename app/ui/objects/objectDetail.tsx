@@ -1,80 +1,35 @@
 'use client';
 
-import { Card, CardHeader, CardBody } from '@heroui/card';
-import { Button } from '@heroui/button';
-import { InfoIcon } from 'lucide-react';
-import Link from 'next/link';
+import { Card, CardBody } from '@heroui/card';
+import { RentalObject } from '@/app/lib/utils/definitions';
+import ObjectMainForm from '@/app/ui/forms/objectMainForm';
+import ObjectNotFoundCard from '@/app/ui/objects/objectNotFoundCard';
 
-interface ObjectProps {
-  id: string;
-  name: string;
-  price: number;
-}
-
-interface ObjectDetailProps {
-  object: ObjectProps | null;
-}
-
-export default function ObjectDetail({ object }: ObjectDetailProps) {
-  if (!object) {
-    return (
-      <div className="container mx-auto p-6">
-        <Card className="mx-auto max-w-md p-6">
-          <div className="flex flex-col items-center justify-center gap-4 py-8">
-            <InfoIcon className="size-12 text-default-400" />
-            <h2 className="text-xl font-medium">Проект не найден</h2>
-            <p className="text-default-500">
-              Строительный проект, который вы ищете, не существует или у вас нет
-              к нему доступа.
-            </p>
-            <Button as={Link} href="/" color="primary">
-              Вернуться к проектам
-            </Button>
-          </div>
-        </Card>
-      </div>
-    );
-  }
-
-  return (
-    <div className="container mx-auto p-6">
-      <div className="mx-auto mb-6 max-w-2xl">
-        <Button
-          as={Link}
-          href="/"
-          color="default"
-          variant="light"
-          className="mb-4"
-        >
-          ← Назад к проектам
-        </Button>
+export default function ObjectDetail({
+  object,
+}: {
+  object: RentalObject | null;
+}) {
+  return object ? (
+    <div className="mx-auto flex max-w-3xl flex-col gap-4 p-6">
+      <div className="flex w-full flex-col flex-nowrap items-start justify-center gap-1 p-4">
         <h1 className="text-2xl font-medium">{object.name}</h1>
-        <div className="mt-1 flex items-center gap-2">
-          <span className="text-default-500">ID: {object.id}</span>
-        </div>
+        <p className="text-small text-default-400">ID: {object.id}</p>
       </div>
 
-      <Card className="mx-auto max-w-2xl p-6">
-        <CardHeader className="px-0 pb-2 pt-0">
-          <h2 className="text-xl font-medium">Детали проекта</h2>
-        </CardHeader>
-        <CardBody className="px-0 py-4">
-          <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <p className="text-sm text-default-500">ID проекта</p>
-              <p className="font-medium">{object.id}</p>
-            </div>
-            <div>
-              <p className="text-sm text-default-500">Название проекта</p>
-              <p className="font-medium">{object.name}</p>
-            </div>
-            <div>
-              <p className="text-sm text-default-500">Стоимость аренды</p>
-              <p className="font-medium">{object.price} ₽</p>
-            </div>
+      <Card className="w-full">
+        <CardBody className="flex flex-col gap-4 p-4">
+          <div className="flex items-center justify-between">
+            <h3 className="w-full text-lg font-medium">Общая информация</h3>
           </div>
+          <ObjectMainForm object={object} />
+          {/*TODO: records + data for sale*/}
         </CardBody>
       </Card>
+    </div>
+  ) : (
+    <div className="flex h-screen items-center justify-center">
+      <ObjectNotFoundCard />
     </div>
   );
 }

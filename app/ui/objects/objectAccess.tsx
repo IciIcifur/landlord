@@ -7,6 +7,7 @@ import objectsStore from '@/app/stores/objectsStore';
 import { Button } from '@heroui/button';
 import { PlusIcon } from 'lucide-react';
 import { Card, CardBody } from '@heroui/card';
+import { RentalObject } from '@/app/lib/utils/definitions';
 
 export default function ObjectAccess() {
   const router = useRouter();
@@ -46,9 +47,11 @@ export default function ObjectAccess() {
 
       {selectedObjectId ? (
         <ObjectDetail
-          object={objectsStore.allObjects.find(
-            (object) => object.id === selectedObjectId,
-          )}
+          object={
+            objectsStore.allObjects.find(
+              (object) => object.id === selectedObjectId,
+            ) as RentalObject
+          }
         />
       ) : (
         <Card className="w-full">

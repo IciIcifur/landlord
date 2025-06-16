@@ -26,7 +26,7 @@ export default function ObjectCard({
     onDeleteOpen();
   };
   return (
-    <Card key={object.id} className="w-full">
+    <Card className="w-full">
       <CardBody className="flex flex-col gap-1 p-4">
         <div className="flex items-center justify-between">
           <div className="flex w-full flex-nowrap items-center gap-2">

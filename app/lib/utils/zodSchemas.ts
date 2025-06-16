@@ -21,7 +21,7 @@ export const LoginFormSchema = z.object({
     .regex(passwordRegex, 'Введите корректный пароль'),
 });
 
-export const EditObjectFormSchema = z.object({
+export const objectMainFormSchema = z.object({
   name: z
     .string()
     .nonempty('Название объекта обязательно')
@@ -34,8 +34,13 @@ export const EditObjectFormSchema = z.object({
     .max(100, 'Адрес объекта не может быть длиннее 100 символов')
     .regex(commonRegex, 'Введите корректный адрес'),
 
+  description: z
+    .string()
+    .max(150, 'Описание объекта не может быть длиннее 150 символов')
+    .regex(commonRegex, 'Введите корректное описание'),
+
   square: z
     .number()
     .min(0, 'Площадь должна быть положительной')
-    .max(500, 'Площадь объекта не может превышать 500 м. кв.'),
+    .max(500, 'Площадь объекта не может превышать 500 м²'),
 });
