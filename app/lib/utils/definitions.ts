@@ -11,8 +11,8 @@ export interface RentalObject {
   address: string;
   square: number;
   description?: string;
-  records: Record[];
-  dataForSale: DataForSale;
+  records?: Record[];
+  dataForSale?: DataForSale;
   users?: Pick<User, 'id' | 'email'>[];
 }
 
