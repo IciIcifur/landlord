@@ -3,8 +3,8 @@
 import { Card, CardBody } from '@heroui/card';
 import { Button } from '@heroui/button';
 import Link from 'next/link';
-import { PencilIcon, PlusIcon, TrashIcon, UsersIcon } from 'lucide-react';
-import { UserRole } from '@/app/lib/utils/definitions';
+import { PlusIcon, UsersIcon } from 'lucide-react';
+import { RentalObject, UserRole } from '@/app/lib/utils/definitions';
 import { useState } from 'react';
 import { useDisclosure } from '@heroui/modal';
 import EditObjectModal from '@/app/ui/modals/editObjectModal';
@@ -12,6 +12,7 @@ import AreYouSureModal from '@/app/ui/modals/areYouSureModal';
 import objectsStore from '@/app/stores/objectsStore';
 import userStore from '@/app/stores/userStore';
 import { observer } from 'mobx-react-lite';
+import ObjectCard from '@/app/ui/objects/objectCard';
 
 const ObjectsList = observer(() => {
   const [activeObjectId, setActiveObjectId] = useState<string | undefined>(
@@ -29,7 +30,10 @@ const ObjectsList = observer(() => {
   } = useDisclosure();
 
   const handleDelete = () => {
-    console.log('Delete object: ', activeObjectId);
+    // TODO: delete activeObjectId
+    if (activeObjectId) {
+      objectsStore.deleteObjectById(activeObjectId);
+    }
     onDeleteOpenChange();
   };
 
@@ -42,7 +46,7 @@ const ObjectsList = observer(() => {
               color="primary"
               startContent={<PlusIcon className="size-4" />}
             >
-              Добавить новый проект
+              Добавить новый объект
             </Button>
 
             <Button
@@ -58,76 +62,30 @@ const ObjectsList = observer(() => {
         )}
 
         {objectsStore.allObjects.map((object) => (
-          <Card key={object.id} className="w-full">
-            <CardBody className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-medium">{object.name}</h3>
-                  <p className="text-default-500">ID: {object.id}</p>
-                  <p className="mt-1 font-medium text-primary">
-                    {object.price} ₽
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    as={Link}
-                    href={`/${object.id}`}
-                    color="primary"
-                    size="sm"
-                    variant="flat"
-                  >
-                    Подробнее
-                  </Button>
-
-                  {userStore.user?.role === UserRole.ADMIN && (
-                    <>
-                      <Button
-                        color="default"
-                        size="sm"
-                        variant="flat"
-                        isIconOnly
-                        onPress={() => {
-                          setActiveObjectId(object.id);
-                          onEditOpen();
-                        }}
-                      >
-                        <PencilIcon className="size-4" />
-                      </Button>
-                      <Button
-                        color="danger"
-                        size="sm"
-                        variant="flat"
-                        isIconOnly
-                        onPress={() => {
-                          setActiveObjectId(object.id);
-                          onDeleteOpen();
-                        }}
-                      >
-                        <TrashIcon className="size-4" />
-                      </Button>
-                    </>
-                  )}
-                </div>
-              </div>
-            </CardBody>
-          </Card>
+          <ObjectCard
+            key={object.id}
+            object={object}
+            onDeleteOpen={onDeleteOpen}
+            onEditOpen={onEditOpen}
+            setActiveId={setActiveObjectId}
+          />
         ))}
 
         {!objectsStore.allObjects.length && (
           <Card className="w-full">
             <CardBody className="p-6 text-center">
-              <p className="text-default-500">
-                Строительные проекты не найдены.
-              </p>
+              <p className="text-default-500">Объекты аренды не найдены.</p>
             </CardBody>
           </Card>
         )}
       </div>
       {isEditOpen && (
         <EditObjectModal
-          object={objectsStore.allObjects.find(
-            (object) => object.id === activeObjectId,
-          )}
+          object={
+            objectsStore.allObjects.find(
+              (object) => object.id === activeObjectId,
+            ) as RentalObject
+          }
           isOpen={isEditOpen}
           onOpenChange={onEditOpenChange}
         />

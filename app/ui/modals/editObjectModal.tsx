@@ -12,38 +12,40 @@ import { Form } from '@heroui/form';
 import CheckFormFields from '@/app/lib/utils/checkFormFields';
 import { EditObjectFormSchema } from '@/app/lib/utils/zodSchemas';
 import { NumberInput } from '@heroui/number-input';
-import { RussianRubleIcon } from 'lucide-react';
+import { RentalObject } from '@/app/lib/utils/definitions';
+import objectsStore from '@/app/stores/objectsStore';
 
 export default function EditObjectModal({
   object,
   isOpen,
   onOpenChange,
 }: {
-  object: any;
+  object: RentalObject;
   isOpen: boolean;
-  onOpenChange: (change: boolean) => void;
+  onOpenChange: () => void;
 }) {
   const [errors, setErrors] = useState<any>({});
   const [isLoading, setIsLoading] = useState(false);
 
   const [name, setName] = useState<string>(object.name);
   const [address, setAddress] = useState<string>(object.address || '');
-  const [price, setPrice] = useState<number>(object.price);
+  const [square, setSquare] = useState<number>(object.square);
 
   useEffect(() => {
     setErrors(
       CheckFormFields(
-        { name: name, address: address, price: price },
+        { name: name, address: address, square: square },
         EditObjectFormSchema,
       ),
     );
-  }, [name, address, price, setErrors]);
+  }, [name, address, square, setErrors]);
 
   const onSubmit = () => {
     setIsLoading(true);
     // TODO: post request to server
-    console.log('Submit!');
+    objectsStore.updateObjectById(object.id, { name, address, square });
     setIsLoading(false);
+    onOpenChange();
   };
 
   return (
@@ -72,16 +74,13 @@ export default function EditObjectModal({
             />
             <NumberInput
               isRequired
-              value={price}
-              onValueChange={setPrice}
+              value={square}
+              onValueChange={setSquare}
               errorMessage={errors.price}
-              label="Стоимость объекта"
-              placeholder="30,000"
-              name="price"
+              label="Площадь объекта (м²)"
+              placeholder="85"
+              name="square"
               hideStepper
-              endContent={
-                <RussianRubleIcon className="flex size-4 h-full items-center stroke-default-500" />
-              }
             />
           </Form>
         </ModalBody>

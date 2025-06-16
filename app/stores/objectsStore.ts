@@ -1,8 +1,9 @@
 import { action, makeAutoObservable, observable } from 'mobx';
+import { RentalObject } from '@/app/lib/utils/definitions';
 
 class ObjectsStore {
-  allObjects: any[] = [];
-  activeObject: any = null;
+  allObjects: RentalObject[] = [];
+  activeObject: RentalObject | null = null;
 
   constructor() {
     makeAutoObservable(this, {
@@ -10,6 +11,8 @@ class ObjectsStore {
       activeObject: observable,
       setAllObjects: action,
       setActiveObject: action,
+      updateObjectById: action,
+      deleteObjectById: action,
     });
   }
 
@@ -23,7 +26,7 @@ class ObjectsStore {
     this.activeObject = object;
   };
 
-  updateObjectById = (objectId: string, newAttrs: any) => {
+  updateObjectById = (objectId: string, newAttrs: Partial<RentalObject>) => {
     const objectIndex = this.allObjects.findIndex(
       (object) => object.id === objectId,
     );
@@ -32,8 +35,13 @@ class ObjectsStore {
         ...this.allObjects[objectIndex],
         ...newAttrs,
       };
-      // TODO: post request
     } else console.error('Этого объекта не существует.');
+  };
+
+  deleteObjectById = (objectId: string) => {
+    this.allObjects = this.allObjects.filter(
+      (object) => object.id !== objectId,
+    );
   };
 }
 
