@@ -29,6 +29,12 @@ async function getObjects() {
       square: 50,
       address: 'ул. Тверская, д. 7, Москва',
       description: 'Современный офис с ремонтом и парковкой',
+      users: [
+        { id: '1', email: 'ivan.petrov@example.com' },
+        { id: '2', email: 'elena.smirnova@example.com' },
+        { id: '3', email: 'alexey.ivanov@example.com' },
+        { id: '4', email: 'maria.kuznetsova@example.com' },
+      ],
     },
     {
       id: '2',

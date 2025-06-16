@@ -26,6 +26,9 @@ class ObjectsStore {
     this.activeObject = object;
   };
 
+  getObjectById = (id: string): RentalObject => {
+    return this.allObjects.find((object) => object.id == id);
+  };
   updateObjectById = (objectId: string, newAttrs: Partial<RentalObject>) => {
     const objectIndex = this.allObjects.findIndex(
       (object) => object.id === objectId,

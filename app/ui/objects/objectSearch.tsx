@@ -3,6 +3,8 @@ import objectsStore from '@/app/stores/objectsStore';
 import { observer } from 'mobx-react-lite';
 import SmallObjectCard from '@/app/ui/objects/smallObjectCard';
 import { useEffect, useState } from 'react';
+import { toJS } from 'mobx';
+import { RentalObject } from '@/app/lib/utils/definitions';
 
 const ObjectSearch = observer(
   ({
@@ -22,7 +24,7 @@ const ObjectSearch = observer(
         placeholder="Жилой комплекс 'Дуб'"
         name="object search"
       >
-        {(item) =>
+        {(item: RentalObject) =>
           (
             <AutocompleteItem key={item.id} textValue={item.name}>
               <SmallObjectCard object={item} />

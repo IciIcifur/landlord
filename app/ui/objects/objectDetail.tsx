@@ -28,8 +28,6 @@ export default function ObjectDetail({
       </Card>
     </div>
   ) : (
-    <div className="flex h-screen items-center justify-center">
-      <ObjectNotFoundCard />
-    </div>
+    <ObjectNotFoundCard />
   );
 }

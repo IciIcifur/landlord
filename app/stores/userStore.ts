@@ -1,9 +1,10 @@
 import { action, makeAutoObservable, observable } from 'mobx';
-import { User } from '@/app/lib/utils/definitions';
+import { User, UserRole } from '@/app/lib/utils/definitions';
 
 class UserStore {
   user: User | undefined = undefined;
   isAuthenticated = false;
+  allUsers: User[] = [];
 
   constructor() {
     makeAutoObservable(this, {
@@ -11,6 +12,10 @@ class UserStore {
       isAuthenticated: observable,
       setUser: action,
       clearUser: action,
+      allUsers: observable,
+      setAllUsers: action,
+      addUser: action,
+      deleteUser: action,
     });
   }
 
@@ -19,10 +24,19 @@ class UserStore {
     this.user = user;
     this.isAuthenticated = true;
   }
-
   clearUser() {
     this.user = undefined;
     this.isAuthenticated = false;
+  }
+
+  setAllUsers(users: User[]) {
+    this.allUsers = users;
+  }
+  addUser(id: string, email: string) {
+    this.allUsers.push({ id, email, role: UserRole.CLIENT });
+  }
+  deleteUser(id: string) {
+    this.allUsers = this.allUsers.filter((user) => user.id !== id);
   }
 }
 

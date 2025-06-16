@@ -1,7 +1,6 @@
 export interface User {
   id: string;
   email: string;
-  password: string;
   role: UserRole;
 }
 
@@ -13,7 +12,7 @@ export interface RentalObject {
   description?: string;
   records?: Record[];
   dataForSale?: DataForSale;
-  users?: Pick<User, 'id' | 'email'>[];
+  users?: User[];
 }
 
 export interface Record {

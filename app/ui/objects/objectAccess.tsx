@@ -2,30 +2,27 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import ObjectSearch from '@/app/ui/objects/objectSearch';
-import ObjectDetail from '@/app/ui/objects/objectDetail';
 import objectsStore from '@/app/stores/objectsStore';
 import { Button } from '@heroui/button';
 import { PlusIcon } from 'lucide-react';
 import { Card, CardBody } from '@heroui/card';
-import { RentalObject } from '@/app/lib/utils/definitions';
+import ObjectUserInfo from '@/app/ui/objects/objectUserInfo';
 
 export default function ObjectAccess() {
   const router = useRouter();
   const queryParams = useSearchParams();
-  const initialObjectId = queryParams.get('object_id');
-  const [selectedObjectId, setSelectedObjectId] = useState(initialObjectId);
+  const [selectedObjectId, setSelectedObjectId] = useState('');
 
   useEffect(() => {
-    if (initialObjectId !== selectedObjectId)
-      setSelectedObjectId(initialObjectId);
-  }, [initialObjectId]);
+    const initialObjectId = queryParams.get('object_id');
+
+    setSelectedObjectId(initialObjectId);
+  }, []);
 
   useEffect(() => {
-    if (initialObjectId !== selectedObjectId) {
-      const newParams = new URLSearchParams(queryParams);
-      newParams.set('object_id', selectedObjectId);
-      router.replace(`?${newParams.toString()}`);
-    }
+    const newParams = new URLSearchParams(queryParams);
+    newParams.set('object_id', selectedObjectId);
+    router.replace(`?${newParams.toString()}`);
   }, [selectedObjectId, queryParams]);
 
   return (
@@ -46,13 +43,7 @@ export default function ObjectAccess() {
       </div>
 
       {selectedObjectId ? (
-        <ObjectDetail
-          object={
-            objectsStore.allObjects.find(
-              (object) => object.id === selectedObjectId,
-            ) as RentalObject
-          }
-        />
+        <ObjectUserInfo object={objectsStore.getObjectById(selectedObjectId)} />
       ) : (
         <Card className="w-full">
           <CardBody className="items-center justify-center gap-2 p-6">
