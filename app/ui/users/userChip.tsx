@@ -18,7 +18,7 @@ export default function UserChip({
       color={user.id !== userStore.user?.id ? 'primary' : 'secondary'}
       className="text-default-600"
       size="md"
-      isDisabled={user.id == userStore.user?.id}
+      isDisabled={user.id === userStore.user?.id}
       onClose={() => onDelete(user.id)}
       endContent={
         user.id !== userStore.user?.id
