@@ -17,7 +17,7 @@ const ObjectSearch = observer(
         selectedKey={selectedId}
         onSelectionChange={(newKey: string) => setSelectedId(newKey)}
         label="Выберите объект"
-        placeholder="Жилой комплекс 'Дуб'"
+        placeholder='Жилой комплекс "Дуб"'
         name="object search"
       >
         {objectsStore.allObjects.map(

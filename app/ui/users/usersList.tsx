@@ -6,46 +6,70 @@ import UserCard from '@/app/ui/users/userCard';
 import { Listbox, ListboxItem } from '@heroui/listbox';
 import { Input } from '@heroui/input';
 import { useState } from 'react';
-import { SearchIcon } from 'lucide-react';
+import { SearchIcon, UserPlusIcon } from 'lucide-react';
+import { Button } from '@heroui/button';
+import { useDisclosure } from '@heroui/modal';
+import NewUserModal from '@/app/ui/modals/newUserModal';
 
 const UsersList = observer(() => {
   const [searchValue, setSearchValue] = useState('');
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  const handleDeleteUser = (id: string) => {
+    // TODO: delete request
+    userStore.deleteUser(id);
+  };
+
   return (
-    <div className="flex flex-col gap-1">
-      <Input
-        className="w-full"
-        value={searchValue}
-        onValueChange={setSearchValue}
-        label="Найти пользователя"
-        placeholder="landlord@example.com"
-        endContent={<SearchIcon className="h-full stroke-default-400" />}
-        name="user_search"
-        aria-label="user_search"
-      />
-      <Listbox
-        isVirtualized
-        virtualization={{ maxListboxHeight: 424, itemHeight: 56 }}
-        variant="faded"
-      >
-        {userStore.allUsers
-          .filter(
-            (user) =>
-              user.email.includes(searchValue) || user.id.includes(searchValue),
-          )
-          .map(
-            (user) =>
-              (
-                <ListboxItem>
-                  <UserCard
-                    key={user.id}
-                    user={user}
-                    onDelete={(id) => console.log('hi')}
-                  />
-                </ListboxItem>
-              ) as any,
-          )}
-      </Listbox>
-    </div>
+    <>
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center justify-between gap-2">
+          <Input
+            value={searchValue}
+            onValueChange={setSearchValue}
+            label="Найти пользователя"
+            placeholder="landlord@example.com"
+            endContent={<SearchIcon className="h-full stroke-default-400" />}
+            name="user_search"
+            aria-label="user_search"
+          />
+          <Button
+            onPress={onOpen}
+            isIconOnly
+            variant="flat"
+            color="primary"
+            size="lg"
+          >
+            <UserPlusIcon />
+          </Button>
+        </div>
+        <Listbox
+          isVirtualized
+          virtualization={{ maxListboxHeight: 600, itemHeight: 56 }}
+          variant="faded"
+        >
+          {userStore.allUsers
+            .filter(
+              (user) =>
+                user.email.includes(searchValue) ||
+                user.id.includes(searchValue),
+            )
+            .map(
+              (user) =>
+                (
+                  <ListboxItem>
+                    <UserCard
+                      key={user.id}
+                      user={user}
+                      onDelete={handleDeleteUser}
+                    />
+                  </ListboxItem>
+                ) as any,
+            )}
+        </Listbox>
+      </div>
+      {isOpen && <NewUserModal isOpen={isOpen} onOpenChange={onOpenChange} />}
+    </>
   );
 });
 
