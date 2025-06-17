@@ -24,7 +24,7 @@ const MainNavbar = observer(() => {
   const path = usePathname();
 
   useEffect(() => {
-    if (path == '/') setActivePage(0);
+    if (path === '/') setActivePage(0);
     else if (path.includes('users')) setActivePage(2);
     else setActivePage(1);
   }, [path]);
