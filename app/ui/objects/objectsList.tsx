@@ -79,20 +79,16 @@ const ObjectsList = observer(() => {
           </Card>
         )}
       </div>
-      {isEditOpen && (
+      {isEditOpen && activeObjectId && (
         <EditObjectModal
-          object={
-            objectsStore.allObjects.find(
-              (object) => object.id === activeObjectId,
-            ) as RentalObject
-          }
+          object={objectsStore.getObjectById(activeObjectId)}
           isOpen={isEditOpen}
           onOpenChange={onEditOpenChange}
         />
       )}
-      {isDeleteOpen && (
+      {isDeleteOpen && activeObjectId && (
         <AreYouSureModal
-          header={`Вы уверены, что хотите удалить "${objectsStore.allObjects.find((object) => object.id === activeObjectId)?.name}"?`}
+          header={`Вы уверены, что хотите удалить "${objectsStore.getObjectById(activeObjectId).name}"?`}
           description="Объект будет удален без возможности восстановления данных о нем."
           onSubmit={handleDelete}
           isOpen={isDeleteOpen}

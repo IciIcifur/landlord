@@ -3,6 +3,8 @@ import { RentalObject, User, UserRole } from '@/app/lib/utils/definitions';
 import { ReactNode } from 'react';
 import GetUserId from '@/app/lib/utils/getUserId';
 import ObjectsLoader from '@/app/loaders/objectsLoader';
+import MainNavbar from '@/app/ui/mainNavbar';
+import FooterNavbar from '@/app/ui/footerNavbar';
 
 async function getUser() {
   const userId = await GetUserId();
@@ -29,6 +31,12 @@ async function getObjects() {
       square: 50,
       address: 'ул. Тверская, д. 7, Москва',
       description: 'Современный офис с ремонтом и парковкой',
+      users: [
+        { id: '1', email: 'ivan.petrov@example.com' },
+        { id: '2', email: 'elena.smirnova@example.com' },
+        { id: '3', email: 'alexey.ivanov@example.com' },
+        { id: '4', email: 'maria.kuznetsova@example.com' },
+      ],
     },
     {
       id: '2',
@@ -36,13 +44,14 @@ async function getObjects() {
       square: 75,
       address: 'ул. Южная, д. 15, Санкт-Петербург',
       description: 'Теплый склад с погрузочной зоной',
+      users: [],
     },
     {
       id: '3',
       name: 'Коворкинг у метро',
       square: 32,
       address: 'пр-т Ленина, д. 3, Екатеринбург',
-      // description отсутствует, поле необязательное
+      users: [],
     },
     {
       id: '4',
@@ -50,6 +59,7 @@ async function getObjects() {
       square: 98,
       address: 'ул. Советская, д. 10, Казань',
       description: 'Помещение под торговлю с витринами',
+      users: [],
     },
     {
       id: '5',
@@ -57,6 +67,7 @@ async function getObjects() {
       square: 64,
       address: 'пр-т Мира, д. 21, Новосибирск',
       description: 'Уютный офис с панорамными окнами',
+      users: [],
     },
   ] as RentalObject[];
 }
@@ -72,7 +83,12 @@ export default async function MainLayout({
     <>
       <UserLoader user={user} />
       <ObjectsLoader objects={objects} />
-      {children}
+
+      <div className="flex min-h-screen flex-col">
+        <MainNavbar />
+        <div className="flex-1">{children}</div>
+        <FooterNavbar />
+      </div>
     </>
   );
 }

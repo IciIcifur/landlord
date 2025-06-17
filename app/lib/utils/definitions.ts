@@ -1,7 +1,6 @@
 export interface User {
   id: string;
   email: string;
-  password: string;
   role: UserRole;
 }
 
@@ -11,12 +10,12 @@ export interface RentalObject {
   address: string;
   square: number;
   description?: string;
-  records?: Record[];
+  records?: ObjectRecord[];
   dataForSale?: DataForSale;
-  users?: Pick<User, 'id' | 'email'>[];
+  users: User[];
 }
 
-export interface Record {
+export interface ObjectRecord {
   id: string;
   date: string;
   rent?: number;
