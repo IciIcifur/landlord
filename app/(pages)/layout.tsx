@@ -42,13 +42,14 @@ async function getObjects() {
       square: 75,
       address: 'ул. Южная, д. 15, Санкт-Петербург',
       description: 'Теплый склад с погрузочной зоной',
+      users: [],
     },
     {
       id: '3',
       name: 'Коворкинг у метро',
       square: 32,
       address: 'пр-т Ленина, д. 3, Екатеринбург',
-      // description отсутствует, поле необязательное
+      users: [],
     },
     {
       id: '4',
@@ -56,6 +57,7 @@ async function getObjects() {
       square: 98,
       address: 'ул. Советская, д. 10, Казань',
       description: 'Помещение под торговлю с витринами',
+      users: [],
     },
     {
       id: '5',
@@ -63,6 +65,7 @@ async function getObjects() {
       square: 64,
       address: 'пр-т Мира, д. 21, Новосибирск',
       description: 'Уютный офис с панорамными окнами',
+      users: [],
     },
   ] as RentalObject[];
 }

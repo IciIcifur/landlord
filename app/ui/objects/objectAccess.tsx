@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import ObjectSearch from '@/app/ui/objects/objectSearch';
-import objectsStore from '@/app/stores/objectsStore';
 import { Button } from '@heroui/button';
 import { PlusIcon } from 'lucide-react';
 import { Card, CardBody } from '@heroui/card';
@@ -15,15 +14,16 @@ export default function ObjectAccess() {
 
   useEffect(() => {
     const initialObjectId = queryParams.get('object_id');
-
     setSelectedObjectId(initialObjectId);
   }, []);
 
   useEffect(() => {
-    const newParams = new URLSearchParams(queryParams);
-    newParams.set('object_id', selectedObjectId);
-    router.replace(`?${newParams.toString()}`);
-  }, [selectedObjectId, queryParams]);
+    if (selectedObjectId && selectedObjectId !== queryParams.get('object_id')) {
+      const newParams = new URLSearchParams(queryParams);
+      newParams.set('object_id', selectedObjectId);
+      router.replace(`?${newParams.toString()}`);
+    }
+  }, [selectedObjectId]);
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
@@ -43,7 +43,7 @@ export default function ObjectAccess() {
       </div>
 
       {selectedObjectId ? (
-        <ObjectUserInfo object={objectsStore.getObjectById(selectedObjectId)} />
+        <ObjectUserInfo objectId={selectedObjectId} />
       ) : (
         <Card className="w-full">
           <CardBody className="items-center justify-center gap-2 p-6">
