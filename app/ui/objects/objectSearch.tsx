@@ -3,6 +3,7 @@ import objectsStore from '@/app/stores/objectsStore';
 import { observer } from 'mobx-react-lite';
 import SmallObjectCard from '@/app/ui/objects/smallObjectCard';
 import { RentalObject } from '@/app/lib/utils/definitions';
+import { Dispatch, SetStateAction } from 'react';
 
 const ObjectSearch = observer(
   ({
@@ -10,12 +11,12 @@ const ObjectSearch = observer(
     setSelectedId,
   }: {
     selectedId: string | null;
-    setSelectedId: (newId: string | null) => void;
+    setSelectedId: Dispatch<SetStateAction<string>>;
   }) => {
     return (
       <Autocomplete
         selectedKey={selectedId}
-        onSelectionChange={(newKey: string) => setSelectedId(newKey)}
+        onSelectionChange={(newKey) => setSelectedId(newKey as string)}
         label="Выберите объект"
         placeholder='Жилой комплекс "Дуб"'
         name="object search"

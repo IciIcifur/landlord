@@ -12,7 +12,7 @@ export default function ObjectAccess() {
 
   useEffect(() => {
     const initialObjectId = queryParams.get('object_id');
-    setSelectedObjectId(initialObjectId);
+    setSelectedObjectId(initialObjectId || '');
   }, []);
 
   useEffect(() => {
