@@ -1,16 +1,15 @@
 import { model, models, Schema } from 'mongoose';
 
 const ObjectSchema = new Schema({
-  id: {
-    type: String,
-    required: true,
-    unique: true,
-  },
   name: {
     type: String,
     required: true,
   },
-  size: {
+  address: {
+    type: String,
+    required: true,
+  },
+  square: {
     type: Number,
     min: [0, 'Площадь не может быть отрицательной'],
     required: true,
@@ -19,10 +18,10 @@ const ObjectSchema = new Schema({
     type: String,
     default: null,
   },
-  recordId: {
-    type: String,
+  records: {
+    type: [{ type: String }],
     ref: 'Record',
-    default: null,
+    default: [],
   },
   dataForSale: {
     type: String,
@@ -33,6 +32,18 @@ const ObjectSchema = new Schema({
     type: [{ type: String }],
     default: [],
   },
+});
+
+ObjectSchema.virtual('id').get(function () {
+  return this._id.toHexString();
+});
+
+ObjectSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: function (doc, ret) {
+    delete ret._id;
+  }
 });
 
 const ObjectModel = models.Object || model('Object', ObjectSchema);

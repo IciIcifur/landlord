@@ -21,6 +21,7 @@
     "@heroui/theme": "^2.4.15",
     "@types/tailwindcss": "^3.1.0",
     "axios": "^1.9.0",
+    "bcryptjs": "^3.0.2",
     "clsx": "^2.1.1",
     "framer-motion": "^12.9.4",
     "lucide-react": "^0.503.0",
