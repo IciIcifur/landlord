@@ -50,39 +50,39 @@ const ObjectUserInfo = observer(({ objectId }: { objectId: string }) => {
             </p>
           </div>
         </div>
-        <div className="flex w-full items-center justify-between gap-2">
-          <h4 className="w-full text-small font-medium">
-            Пользователи, которым доступен этот объект:
-          </h4>
-          <Autocomplete
-            className="w-96"
-            selectedKey={newUserId}
-            onSelectionChange={(key) => setNewUserId(key as string)}
-            variant="bordered"
-            placeholder="Добавить..."
-            size="sm"
-            radius="full"
-            isVirtualized={true}
-            name="user_search"
-            aria-label="user_search"
-          >
-            {userStore.allUsers
-              .filter(
-                (user) =>
-                  (object.users || []).findIndex(
-                    (objectUser) => objectUser.id === user.id,
-                  ) < 0,
-              )
-              .map(
-                (item: User) =>
-                  (
-                    <AutocompleteItem key={item.id} textValue={item.email}>
-                      {item.email}
-                    </AutocompleteItem>
-                  ) as any,
-              )}
-          </Autocomplete>
-        </div>
+
+        <h4 className="w-full text-small font-medium">
+          Пользователи, которым доступен этот объект:
+        </h4>
+        <Autocomplete
+          className="max-w-sm"
+          selectedKey={newUserId}
+          onSelectionChange={(key) => setNewUserId(key as string)}
+          variant="bordered"
+          placeholder="Выдать доступ..."
+          size="sm"
+          radius="full"
+          isVirtualized={true}
+          name="user_search"
+          aria-label="user_search"
+        >
+          {userStore.allUsers
+            .filter(
+              (user) =>
+                (object.users || []).findIndex(
+                  (objectUser) => objectUser.id === user.id,
+                ) < 0,
+            )
+            .map(
+              (item: User) =>
+                (
+                  <AutocompleteItem key={item.id} textValue={item.email}>
+                    {item.email}
+                  </AutocompleteItem>
+                ) as any,
+            )}
+        </Autocomplete>
+
         {
           (object.users?.length ? (
             <div className="flex flex-wrap gap-2">

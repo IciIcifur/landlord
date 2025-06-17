@@ -22,8 +22,8 @@ const UsersList = observer(() => {
 
   return (
     <>
-      <div className="flex flex-col gap-1">
-        <div className="flex items-center justify-between gap-2">
+      <div className="flex w-full flex-col gap-1">
+        <div className="flex w-full items-center justify-between gap-2">
           <Input
             value={searchValue}
             onValueChange={setSearchValue}
@@ -45,8 +45,9 @@ const UsersList = observer(() => {
         </div>
         <Listbox
           isVirtualized
-          virtualization={{ maxListboxHeight: 600, itemHeight: 56 }}
+          virtualization={{ maxListboxHeight: 588, itemHeight: 56 }}
           variant="faded"
+          aria-label="all_users"
         >
           {userStore.allUsers
             .filter(
@@ -57,12 +58,8 @@ const UsersList = observer(() => {
             .map(
               (user) =>
                 (
-                  <ListboxItem>
-                    <UserCard
-                      key={user.id}
-                      user={user}
-                      onDelete={handleDeleteUser}
-                    />
+                  <ListboxItem key={user.id} textValue={user.email}>
+                    <UserCard user={user} onDelete={handleDeleteUser} />
                   </ListboxItem>
                 ) as any,
             )}

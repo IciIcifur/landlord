@@ -10,12 +10,12 @@ export interface RentalObject {
   address: string;
   square: number;
   description?: string;
-  records?: Record[];
+  records?: ObjectRecord[];
   dataForSale?: DataForSale;
-  users?: User[];
+  users: User[];
 }
 
-export interface Record {
+export interface ObjectRecord {
   id: string;
   date: string;
   rent?: number;

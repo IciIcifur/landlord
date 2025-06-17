@@ -3,6 +3,8 @@ import { RentalObject, User, UserRole } from '@/app/lib/utils/definitions';
 import { ReactNode } from 'react';
 import GetUserId from '@/app/lib/utils/getUserId';
 import ObjectsLoader from '@/app/loaders/objectsLoader';
+import MainNavbar from '@/app/ui/mainNavbar';
+import FooterNavbar from '@/app/ui/footerNavbar';
 
 async function getUser() {
   const userId = await GetUserId();
@@ -81,7 +83,12 @@ export default async function MainLayout({
     <>
       <UserLoader user={user} />
       <ObjectsLoader objects={objects} />
-      {children}
+
+      <div className="flex min-h-screen flex-col">
+        <MainNavbar />
+        <div className="flex-1">{children}</div>
+        <FooterNavbar />
+      </div>
     </>
   );
 }
