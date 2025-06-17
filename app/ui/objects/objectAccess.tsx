@@ -2,8 +2,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import ObjectSearch from '@/app/ui/objects/objectSearch';
-import { Button } from '@heroui/button';
-import { PlusIcon } from 'lucide-react';
 import { Card, CardBody } from '@heroui/card';
 import ObjectUserInfo from '@/app/ui/objects/objectUserInfo';
 
@@ -26,20 +24,12 @@ export default function ObjectAccess() {
   }, [selectedObjectId]);
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-2">
       <div className="flex w-full items-center justify-between gap-4">
         <ObjectSearch
           selectedId={selectedObjectId}
           setSelectedId={setSelectedObjectId}
         />
-
-        <Button
-          variant="flat"
-          color="primary"
-          startContent={<PlusIcon className="size-4" />}
-        >
-          Новый пользователь
-        </Button>
       </div>
 
       {selectedObjectId ? (

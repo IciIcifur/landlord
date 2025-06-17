@@ -1,6 +1,6 @@
-import ObjectAccess from '@/app/ui/objects/objectAccess';
 import { User, UserRole } from '@/app/lib/utils/definitions';
 import UsersLoader from '@/app/loaders/usersLoader';
+import UsersContent from '@/app/ui/users/usersContent';
 
 async function getUsers() {
   // TODO: await user list
@@ -23,15 +23,17 @@ export default async function UsersPage() {
   return (
     <>
       <UsersLoader users={allUsers} />
-      <div className="container mx-auto p-6">
-        <div className="mx-auto mb-6 max-w-2xl">
+      <div className="container mx-auto max-w-2xl p-6">
+        <div className="mb-6 w-full">
           <h1 className="text-2xl font-medium">Управление пользователями</h1>
           <p className="text-default-500">
             Панель администратора для управления доступом к объектам
           </p>
         </div>
 
-        <ObjectAccess />
+        <div className="w-full">
+          <UsersContent />
+        </div>
       </div>
     </>
   );
