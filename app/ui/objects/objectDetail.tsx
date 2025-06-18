@@ -11,6 +11,9 @@ import { ReactNode } from 'react';
 import { Button } from '@heroui/button';
 import { FileDownIcon } from 'lucide-react';
 import { Tab, Tabs } from '@heroui/tabs';
+import userStore from '@/app/stores/userStore';
+import { UserRole } from '@/app/lib/utils/definitions';
+import ObjectRecordsTable from '@/app/ui/objects/objectRecordsTable';
 
 const ObjectDetail = observer(() => {
   return objectsStore.activeObject ? (
@@ -29,8 +32,12 @@ const ObjectDetail = observer(() => {
         color="primary"
         classNames={{ tab: 'text-sm font-medium', panel: 'p-0' }}
       >
-        <Tab key="records" title="Записи по объекту"></Tab>
-        <Tab key="info" title="Информация об объекте">
+        <Tab key="records" title="Записи по объекту">
+          <ObjectRecordsTable
+            records={objectsStore.activeObject.records || []}
+          />
+        </Tab>
+        <Tab key="info" title="Информация">
           <div className="flex flex-col gap-4">
             <Card className="w-full">
               <CardBody className="flex flex-col gap-4 p-4">
@@ -39,39 +46,47 @@ const ObjectDetail = observer(() => {
                     Общая информация
                   </h3>
                 </div>
-                <ObjectMainForm object={objectsStore.activeObject} />
-              </CardBody>
-            </Card>
-
-            <Card className="w-full">
-              <CardBody className="flex flex-col gap-4 p-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="w-full text-lg font-medium">
-                    Коммерческая информация
-                  </h3>
-                  <Button
-                    onPress={() => {
-                      /*TODO: download excel*/
-                    }}
-                    isIconOnly
-                    variant="light"
-                    color="secondary"
-                    className="h-7 w-7 min-w-7"
-                  >
-                    <FileDownIcon className="w-5" />
-                  </Button>
-                </div>
-                {objectsStore.activeObjectDataForSale &&
-                  ((
-                    <DataForSaleTable
-                      dataForSale={objectsStore.activeObjectDataForSale}
-                    />
-                  ) as ReactNode)}
-                <DataForSaleForm
-                  dataForSale={objectsStore.activeObject.dataForSale}
+                <ObjectMainForm
+                  isReadonly={!(userStore.user?.role === UserRole.ADMIN)}
+                  object={objectsStore.activeObject}
                 />
               </CardBody>
             </Card>
+            {userStore.user?.role == UserRole.ADMIN &&
+              ((
+                <>
+                  <Card className="w-full">
+                    <CardBody className="flex flex-col gap-4 p-4">
+                      <div className="flex items-center justify-between">
+                        <h3 className="w-full text-lg font-medium">
+                          Коммерческая информация
+                        </h3>
+                        <Button
+                          onPress={() => {
+                            /*TODO: download excel*/
+                          }}
+                          isIconOnly
+                          variant="light"
+                          color="secondary"
+                          className="h-7 w-7 min-w-7"
+                        >
+                          <FileDownIcon className="w-5" />
+                        </Button>
+                      </div>
+
+                      {objectsStore.activeObjectDataForSale &&
+                        ((
+                          <DataForSaleTable
+                            dataForSale={objectsStore.activeObjectDataForSale}
+                          />
+                        ) as ReactNode)}
+                      <DataForSaleForm
+                        dataForSale={objectsStore.activeObject.dataForSale}
+                      />
+                    </CardBody>
+                  </Card>{' '}
+                </>
+              ) as ReactNode)}
           </div>
         </Tab>
       </Tabs>

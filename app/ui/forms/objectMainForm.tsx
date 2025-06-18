@@ -9,7 +9,13 @@ import { objectMainFormSchema } from '@/app/lib/utils/zodSchemas';
 import { Button } from '@heroui/button';
 import objectsStore from '@/app/stores/objectsStore';
 
-export default function ObjectMainForm({ object }: { object: RentalObject }) {
+export default function ObjectMainForm({
+  isReadonly,
+  object,
+}: {
+  isReadonly: boolean;
+  object: RentalObject;
+}) {
   const [errors, setErrors] = useState<any>({});
   const [isLoading, setIsLoading] = useState(false);
 
@@ -30,6 +36,7 @@ export default function ObjectMainForm({ object }: { object: RentalObject }) {
   }, [name, address, square, description, setErrors]);
 
   const onSubmit = () => {
+    if (isReadonly) return;
     setIsLoading(true);
     // TODO: post request
     objectsStore.updateObjectById(object.id, {
@@ -47,6 +54,7 @@ export default function ObjectMainForm({ object }: { object: RentalObject }) {
         <div className="flex w-full flex-col gap-2 sm:w-2/3">
           <Input
             isRequired
+            isReadOnly={isReadonly}
             value={name}
             onValueChange={setName}
             errorMessage={errors.name}
@@ -56,6 +64,7 @@ export default function ObjectMainForm({ object }: { object: RentalObject }) {
           />
           <NumberInput
             isRequired
+            isReadOnly={isReadonly}
             value={square}
             onValueChange={setSquare}
             errorMessage={errors.square}
@@ -75,6 +84,7 @@ export default function ObjectMainForm({ object }: { object: RentalObject }) {
         <div className="flex w-full flex-col items-end gap-2">
           <Input
             isRequired
+            isReadOnly={isReadonly}
             value={address}
             onValueChange={setAddress}
             errorMessage={errors.address}
@@ -83,6 +93,7 @@ export default function ObjectMainForm({ object }: { object: RentalObject }) {
             name="address"
           />
           <Textarea
+            isReadOnly={isReadonly}
             value={description}
             onValueChange={setDescription}
             errorMessage={errors.description}
@@ -94,7 +105,7 @@ export default function ObjectMainForm({ object }: { object: RentalObject }) {
           />
           <Button
             isLoading={isLoading}
-            isDisabled={!!Object.keys(errors).length}
+            isDisabled={!!Object.keys(errors).length || isReadonly}
             onPress={onSubmit}
             className="w-fit"
             color="primary"
