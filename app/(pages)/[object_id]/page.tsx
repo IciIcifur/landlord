@@ -1,6 +1,7 @@
 import ObjectDetail from '@/app/ui/objects/objectDetail';
 import GetUserId from '@/app/lib/utils/getUserId';
 import { RentalObject } from '@/app/lib/utils/definitions';
+import ObjectLoader from '@/app/loaders/objectLoader';
 
 interface ObjectPageProps {
   object_id: string;
@@ -17,6 +18,17 @@ async function getObject(objectId?: string) {
       square: 50,
       address: 'ул. Тверская, д. 7, Москва',
       description: 'Современный офис с ремонтом и парковкой',
+      dataForSale: {
+        purchasePrice: 1000,
+        priceForSale: undefined,
+        countOfMonth: undefined,
+        profitPerMonth: undefined,
+        totalProfit: undefined,
+        payback5Year: undefined,
+        payback7Year: undefined,
+        payback10Year: undefined,
+        percentPerYear: undefined,
+      },
     },
     {
       id: '2',
@@ -59,5 +71,10 @@ export default async function ObjectPage({
   const { object_id } = await params;
   const objectData = await getObject(object_id);
 
-  return <ObjectDetail object={objectData} />;
+  return (
+    <>
+      <ObjectLoader object={objectData} />
+      <ObjectDetail object={objectData} />
+    </>
+  );
 }

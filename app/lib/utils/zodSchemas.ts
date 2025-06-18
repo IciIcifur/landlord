@@ -45,3 +45,17 @@ export const objectMainFormSchema = z.object({
     .min(1, 'Площадь должна быть положительной')
     .max(500, 'Площадь объекта не может превышать 500 м²'),
 });
+
+export const dataForSaleFormSchema = z.object({
+  purchasePrice: z
+    .number()
+    .min(0, 'Цена покупки должна быть положительной')
+    .max(10000000000, 'Цена покупки не может быть больше 10 млрд. рублей')
+    .optional(),
+
+  priceForSale: z
+    .number()
+    .min(0, 'Цена продажи должна быть положительной')
+    .max(10000000000, 'Цена продажи не может быть больше 10 млрд. рублей')
+    .optional(),
+});

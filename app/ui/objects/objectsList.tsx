@@ -45,7 +45,7 @@ const ObjectsList = observer(() => {
 
   return (
     <>
-      <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
+      <div className="flex w-full flex-col gap-4">
         {userStore.user?.role === UserRole.ADMIN && (
           <div className="mb-4 flex items-center justify-between gap-2">
             <Button
