@@ -43,8 +43,8 @@ export default function ObjectMainForm({ object }: { object: RentalObject }) {
 
   return (
     <Form validationErrors={errors}>
-      <div className="flex w-full flex-nowrap justify-between gap-2">
-        <div className="flex w-2/3 flex-col gap-2">
+      <div className="flex w-full flex-wrap justify-between gap-2 sm:flex-nowrap">
+        <div className="flex w-full flex-col gap-2 sm:w-2/3">
           <Input
             isRequired
             value={name}

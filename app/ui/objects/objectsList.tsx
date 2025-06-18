@@ -51,18 +51,28 @@ const ObjectsList = observer(() => {
             <Button
               as={Link}
               href="/users"
-              color="default"
               variant="flat"
-              startContent={<UsersIcon className="size-4" />}
+              className="hidden sm:flex"
+              startContent={<UsersIcon className="h-4" />}
             >
               Управление пользователями
             </Button>
             <Button
+              isIconOnly
+              as={Link}
+              href="/users"
+              variant="flat"
+              className="flex sm:hidden"
+            >
+              <UsersIcon className="h-4" />
+            </Button>
+            <Button
               onPress={onAddOpen}
               color="primary"
-              startContent={<PlusIcon className="size-4" />}
+              className="w-full sm:w-fit"
+              startContent={<PlusIcon className="h-4" />}
             >
-              Новый объект
+              Добавить объект
             </Button>
           </div>
         )}

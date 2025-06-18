@@ -25,7 +25,7 @@ export const objectMainFormSchema = z.object({
   name: z
     .string()
     .nonempty('Название объекта обязательно')
-    .max(32, 'Название объекта не может быть длинее 32 символов')
+    .max(30, 'Название объекта не может быть длиннее 30 символов')
     .regex(commonRegex, 'Введите корректное название'),
 
   address: z
