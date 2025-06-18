@@ -11,6 +11,7 @@ class ObjectsStore {
       activeObject: observable,
       setAllObjects: action,
       setActiveObject: action,
+      addObject: action,
       updateObjectById: action,
       deleteObjectById: action,
       deleteObjectUser: action,
@@ -33,6 +34,9 @@ class ObjectsStore {
     const object = this.allObjects.find((object) => object.id == id);
     if (object) return object;
     throw new Error(`Объект ${id} не найден`);
+  };
+  addObject = (newObject: RentalObject) => {
+    this.allObjects.push(newObject);
   };
   updateObjectById = (objectId: string, newAttrs: Partial<RentalObject>) => {
     const objectIndex = this.allObjects.findIndex(

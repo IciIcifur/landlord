@@ -3,7 +3,7 @@ import z from 'zod';
 const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/;
 const emailRegex = /^[a-zA-Z0-9._]+@[a-zA-Z0-9._]+\.[a-zA-Z]{2,}$/;
 const commonRegex =
-  /^[a-zA-Zа-яА-Я0-9 .,!?\-_:;()@#&%$*+=\[\]{}<>|\/\\\u1F600-\u1F64F\u1F300-\u1F5FF\u1F680-\u1F6FF\u1F700-\u1F77F\u1F780-\u1F7FF\u1F800-\u1F8FF\u1F900-\u1F9FF\u1FA00-\u1FA6F\u1FA70-\u1FAFF\u2600-\u26FF\u2700-\u27BF]*$/;
+  /^[a-zA-Zа-яА-ЯёЁ0-9 !"№;%:?*()_+\-=.,/|\\\[\]{}'@#$^&<>~`«»“”‘’\u1F600-\u1F64F\u1F300-\u1F5FF\u1F680-\u1F6FF\u1F700-\u1F77F\u1F780-\u1F7FF\u1F800-\u1F8FF\u1F900-\u1F9FF\u1FA00-\u1FA6F\u1FA70-\u1FAFF\u2600-\u26FF\u2700-\u27BF]*$/;
 
 export const LoginFormSchema = z.object({
   email: z
@@ -37,10 +37,11 @@ export const objectMainFormSchema = z.object({
   description: z
     .string()
     .max(150, 'Описание объекта не может быть длиннее 150 символов')
-    .regex(commonRegex, 'Введите корректное описание'),
+    .regex(commonRegex, 'Введите корректное описание')
+    .optional(),
 
   square: z
     .number()
-    .min(0, 'Площадь должна быть положительной')
+    .min(1, 'Площадь должна быть положительной')
     .max(500, 'Площадь объекта не может превышать 500 м²'),
 });
