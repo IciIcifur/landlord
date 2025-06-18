@@ -21,11 +21,6 @@ const UserSchema = new Schema({
         enum: Object.values(UserRole),
         required: true,
     },
-    objectId: {
-        type: String,
-        ref: 'Object',
-        default: null,
-    },
 });
 
 UserSchema.virtual('id').get(function () {

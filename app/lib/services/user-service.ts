@@ -1,0 +1,94 @@
+import UserModel, {UserRole} from "@/app/models/UserModel";
+import ObjectModel from "@/app/models/ObjectModel";
+import connectDB from "@/app/lib/utils/db";
+import {hashPassword, validatePassword} from "./auth-service";
+
+export interface CreateUserData {
+    email: string;
+    password: string;
+}
+
+export interface CreateUserResult {
+    id: string;
+    message: string;
+}
+
+export class UserServiceError extends Error {
+    public errors?: Record<string, string>;
+    constructor(
+        message: string,
+        public statusCode = 400,
+        public errors?: Record<string, string>,
+    ) {
+        super(message);
+        this.name = "UserServiceError";
+    }
+}
+
+export async function getAllUsers() {
+    await connectDB();
+    try {
+        return await UserModel.find({}).select("id email role");
+    } catch (error: any) {
+        throw new UserServiceError(error.message || "Ошибка на сервере", 500);
+    }
+}
+
+export async function createOrUpdateUser(userData: CreateUserData): Promise<CreateUserResult> {
+    await connectDB();
+
+    const {email, password} = userData;
+    const errors: Record<string, string> = {};
+    const passwordError = validatePassword(password);
+    if (passwordError) errors.password = passwordError;
+    if (!email) errors.email = "Поле email обязательно";
+    if (Object.keys(errors).length) {
+        throw new UserServiceError("Ошибки валидации", 400, errors);
+    }
+    const hashedPassword = await hashPassword(password);
+    try {
+        const user = await UserModel.findOne({email}).exec();
+        if (user) {
+            user.password = hashedPassword;
+            await user.save();
+            return {id: user.id, message: "Пароль обновлен"};
+        } else {
+            const newUser = new UserModel({
+                email,
+                password: hashedPassword,
+                role: UserRole.CLIENT,
+            });
+            await newUser.save();
+            return {id: newUser.id, message: "Пользователь создан"};
+        }
+    } catch (error: any) {
+        if (error.name === "ValidationError") {
+            const validationErrors: Record<string, string> = {};
+            for (const key in error.errors) {
+                validationErrors[key] = error.errors[key].message;
+            }
+            throw new UserServiceError("Ошибки валидации", 400, validationErrors);
+        }
+        throw new UserServiceError(error.message || "Ошибка на сервере", 500);
+    }
+}
+
+export async function deleteUser(userId: string): Promise<{ userId: string; message: string }> {
+    await connectDB();
+    if (!userId) {
+        throw new UserServiceError("ID пользователя обязателен", 400, {id: "ID пользователя обязателен"});
+    }
+    try {
+        const deletedUser = await UserModel.findByIdAndDelete(userId);
+        if (!deletedUser) {
+            throw new UserServiceError("Пользователь не найден", 404, {id: "Пользователь не найден"});
+        }
+        await ObjectModel.updateMany({users: userId}, {$pull: {users: userId}});
+        return {userId, message: "Пользователь удален"};
+    } catch (error: any) {
+        if (error instanceof UserServiceError) {
+            throw error;
+        }
+        throw new UserServiceError(error.message || "Ошибка на сервере", 500);
+    }
+}
