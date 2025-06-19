@@ -35,7 +35,6 @@ export interface ObjectRecord {
 }
 
 export interface DataForSale {
-  id: string;
   purchasePrice: number;
   priceForSale: number;
   countOfMonth?: number;

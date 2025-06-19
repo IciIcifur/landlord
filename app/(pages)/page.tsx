@@ -6,7 +6,7 @@ export default async function MainPage() {
   const userRole = await GetUserRole();
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-4 p-6">
+    <div className="mx-auto flex max-w-5xl flex-col gap-4 p-6">
       <div className="flex w-full flex-col flex-nowrap items-start justify-center gap-1 p-4">
         <h1 className="text-2xl font-medium">Объекты аренды</h1>
         <p className="text-small text-default-400">
