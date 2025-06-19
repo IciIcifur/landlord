@@ -27,7 +27,7 @@ function withAuth(userId: string, headers: Record<string, string> = {}) {
 }
 
 // ===== AUTH API =====
-export async function loginUser(data: { email: string; password: string }) {
+export async function LoginUser(data: { email: string; password: string }) {
   return apiRequest('/api/auth/login', {
     method: 'POST',
     body: JSON.stringify(data),
@@ -35,22 +35,24 @@ export async function loginUser(data: { email: string; password: string }) {
 }
 
 // ===== USERS API =====
-export async function getAllUsers(userId: string) {
+export async function GetAllUsers(userId: string) {
   return apiRequest('/api/users', {
     method: 'GET',
     headers: withAuth(userId),
   });
 }
 
-export async function createOrUpdateUser(userId: string, data: { email: string; password: string }) {
+export async function CreateOrUpdateUser(
+  userId: string,
+  data: { email: string; password: string },
+) {
   return apiRequest('/api/users', {
     method: 'POST',
     headers: withAuth(userId),
     body: JSON.stringify(data),
   });
 }
-
-export async function deleteUser(userId: string, targetUserId: string) {
+export async function DeleteUser(userId: string, targetUserId: string) {
   return apiRequest(`/api/users/${targetUserId}`, {
     method: 'DELETE',
     headers: withAuth(userId),
@@ -58,14 +60,17 @@ export async function deleteUser(userId: string, targetUserId: string) {
 }
 
 // ===== OBJECTS API =====
-export async function getAllObjects(userId: string) {
+export async function GetAllObjects(userId: string) {
   return apiRequest('/api/objects', {
     method: 'GET',
     headers: withAuth(userId),
   });
 }
 
-export async function createObject(userId: string, data: { name: string; address: string; square: number }) {
+export async function CreateObject(
+  userId: string,
+  data: { name: string; address: string; square: number },
+) {
   return apiRequest('/api/objects', {
     method: 'POST',
     headers: withAuth(userId),
@@ -73,17 +78,22 @@ export async function createObject(userId: string, data: { name: string; address
   });
 }
 
-export async function getObjectById(userId: string, objectId: string) {
+export async function GetObjectById(userId: string, objectId: string) {
   return apiRequest(`/api/objects/${objectId}`, {
     method: 'GET',
     headers: withAuth(userId),
   });
 }
 
-export async function updateObject(
+export async function UpdateObject(
   userId: string,
   objectId: string,
-  data: { name?: string; address?: string; square?: number; description?: string },
+  data: {
+    name?: string;
+    address?: string;
+    square?: number;
+    description?: string;
+  },
 ) {
   return apiRequest(`/api/objects/${objectId}`, {
     method: 'PATCH',
@@ -92,7 +102,7 @@ export async function updateObject(
   });
 }
 
-export async function deleteObject(userId: string, objectId: string) {
+export async function DeleteObject(userId: string, objectId: string) {
   return apiRequest(`/api/objects/${objectId}`, {
     method: 'DELETE',
     headers: withAuth(userId),
@@ -100,7 +110,11 @@ export async function deleteObject(userId: string, objectId: string) {
 }
 
 // ===== OBJECT USERS API =====
-export async function addUserToObject(userId: string, objectId: string, targetUserId: string) {
+export async function AddUserToObject(
+  userId: string,
+  objectId: string,
+  targetUserId: string,
+) {
   return apiRequest(`/api/objects/${objectId}/users`, {
     method: 'POST',
     headers: withAuth(userId),
@@ -108,7 +122,11 @@ export async function addUserToObject(userId: string, objectId: string, targetUs
   });
 }
 
-export async function removeUserFromObject(userId: string, objectId: string, targetUserId: string) {
+export async function RemoveUserFromObject(
+  userId: string,
+  objectId: string,
+  targetUserId: string,
+) {
   return apiRequest(`/api/objects/${objectId}/users/${targetUserId}`, {
     method: 'DELETE',
     headers: withAuth(userId),
@@ -116,21 +134,21 @@ export async function removeUserFromObject(userId: string, objectId: string, tar
 }
 
 // ===== RECORDS API =====
-export async function createRecord(
+export async function CreateRecord(
   userId: string,
   data: {
-    objectId: string
-    rent?: number
-    heat?: number
-    exploitation?: number
-    mop?: number
-    renovation?: number
-    tbo?: number
-    electricity?: number
-    earthRent?: number
-    otherExpenses?: number
-    otherIncomes?: number
-    security?: number
+    objectId: string;
+    rent?: number;
+    heat?: number;
+    exploitation?: number;
+    mop?: number;
+    renovation?: number;
+    tbo?: number;
+    electricity?: number;
+    earthRent?: number;
+    otherExpenses?: number;
+    otherIncomes?: number;
+    security?: number;
   },
 ) {
   return apiRequest('/api/records', {
@@ -140,21 +158,21 @@ export async function createRecord(
   });
 }
 
-export async function getRecordById(userId: string, recordId: string) {
+export async function GetRecordById(userId: string, recordId: string) {
   return apiRequest(`/api/records/${recordId}`, {
     method: 'GET',
     headers: withAuth(userId),
   });
 }
 
-export async function deleteRecord(userId: string, recordId: string) {
+export async function DeleteRecord(userId: string, recordId: string) {
   return apiRequest(`/api/records/${recordId}`, {
     method: 'DELETE',
     headers: withAuth(userId),
   });
 }
 
-export async function getRecordsByObjectId(userId: string, objectId: string) {
+export async function GetRecordsByObjectId(userId: string, objectId: string) {
   return apiRequest(`/api/objects/${objectId}/records`, {
     method: 'GET',
     headers: withAuth(userId),
@@ -162,14 +180,17 @@ export async function getRecordsByObjectId(userId: string, objectId: string) {
 }
 
 // ===== DATA FOR SALE API =====
-export async function getDataForSaleByObjectId(userId: string, objectId: string) {
+export async function GetDataForSaleByObjectId(
+  userId: string,
+  objectId: string,
+) {
   return apiRequest(`/api/objects/${objectId}/data-for-sale`, {
     method: 'GET',
     headers: withAuth(userId),
   });
 }
 
-export async function updateDataForSale(
+export async function UpdateDataForSale(
   userId: string,
   objectId: string,
   data: { purchasePrice?: number; priceForSale?: number },
