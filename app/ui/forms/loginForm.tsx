@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { setCookie } from '@/app/lib/actions/handleCookies';
 import { User, UserRole } from '@/app/lib/utils/definitions';
 import userStore from '@/app/stores/userStore';
+import { LoginUser } from '@/app/lib/actions/clientApi';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -31,16 +32,22 @@ export default function LoginForm() {
     e.preventDefault();
     if (!Object.keys(errors).length) {
       setIsLoading(true);
-      // TODO: server request
-      // TODO: set user id in cookies and store
-      const user: User = { id: 'user1', email, role: UserRole.ADMIN };
-
-      await setCookie(user.id, user.role);
-      userStore.setUser(user);
+      try {
+        const response: { id: string; role: UserRole } | { errors: any } =
+          await LoginUser({ email, password });
+        if (!('errors' in response)) {
+          const user: User = { id: response.id, email, role: response.role };
+          await setCookie(user.id, user.role);
+          userStore.setUser(user);
+        } else {
+          setErrors(response.errors);
+        }
+      } catch (e) {
+        console.error(e);
+      }
 
       setIsLoading(false);
-
-      router.push('/');
+      if (userStore.user) router.push('/');
     }
   };
 

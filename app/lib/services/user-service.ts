@@ -57,7 +57,9 @@ export async function getAllUsers() {
   }
 }
 
-export async function createOrUpdateUser(userData: CreateUserData): Promise<CreateUserResult> {
+export async function createOrUpdateUser(
+  userData: CreateUserData,
+): Promise<CreateUserResult> {
   await connectDB();
   const { email, password } = userData;
   const validationErrors: Record<string, string> = {};
@@ -98,14 +100,21 @@ export async function createOrUpdateUser(userData: CreateUserData): Promise<Crea
 export async function deleteUser(userId: string): Promise<{ message: string }> {
   await connectDB();
   if (!userId) {
-    throw new UserServiceError('ID пользователя обязателен', 400, { id: 'ID пользователя обязателен' });
+    throw new UserServiceError('ID пользователя обязателен', 400, {
+      id: 'ID пользователя обязателен',
+    });
   }
   try {
     const deletedUser = await UserModel.findByIdAndDelete(userId);
     if (!deletedUser) {
-      throw new UserServiceError('Пользователь не найден', 404, { id: 'Пользователь не найден' });
+      throw new UserServiceError('Пользователь не найден', 404, {
+        id: 'Пользователь не найден',
+      });
     }
-    await ObjectModel.updateMany({ users: userId }, { $pull: { users: userId } });
+    await ObjectModel.updateMany(
+      { users: userId },
+      { $pull: { users: userId } },
+    );
     return { message: 'Пользователь удален' };
   } catch (error: any) {
     if (error instanceof UserServiceError) {

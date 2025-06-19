@@ -33,7 +33,9 @@ export class AuthError extends Error {
   }
 }
 
-export function validatePassword(password: string | undefined | null): string | null {
+export function validatePassword(
+  password: string | undefined | null,
+): string | null {
   if (typeof password !== 'string' || !password) {
     return 'Пароль обязателен';
   }
@@ -49,11 +51,16 @@ export async function hashPassword(password: string): Promise<string> {
   return await bcrypt.hash(password, 12);
 }
 
-export async function verifyPassword(password: string, hashedPassword: string): Promise<boolean> {
+export async function verifyPassword(
+  password: string,
+  hashedPassword: string,
+): Promise<boolean> {
   return await bcrypt.compare(password, hashedPassword);
 }
 
-export async function loginUser(credentials: LoginCredentials): Promise<LoginResult> {
+export async function loginUser(
+  credentials: LoginCredentials,
+): Promise<LoginResult> {
   await connectDB();
   const { email, password } = credentials;
   const validationErrors: Record<string, string> = {};
@@ -66,12 +73,16 @@ export async function loginUser(credentials: LoginCredentials): Promise<LoginRes
   try {
     const user = await UserModel.findOne({ email }).exec();
     if (!user) {
-      throw new AuthError('Пользователь не найден', 'email', 404, { email: 'Пользователь не найден' });
+      throw new AuthError('Пользователь не найден', 'email', 404, {
+        email: 'Пользователь не найден',
+      });
     }
 
     const isMatch = await verifyPassword(password, user.password);
     if (!isMatch) {
-      throw new AuthError('Неверный пароль', 'password', 401, { password: 'Неверный пароль' });
+      throw new AuthError('Неверный пароль', 'password', 401, {
+        password: 'Неверный пароль',
+      });
     }
 
     return { id: user.id, role: user.role };

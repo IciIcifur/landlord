@@ -6,7 +6,7 @@ export default async function GetUserRole(): Promise<UserRole | undefined> {
   const session: any = (await cookies()).get('session' as any)?.value;
 
   const role = JSON.parse(session).userRole;
-  switch (UserRole[role]) {
+  switch (role) {
     case 'ADMIN':
       return UserRole.ADMIN;
     case 'CLIENT':

@@ -31,7 +31,11 @@ function getLast12MonthsRecords(records: any[]): any[] {
   });
 }
 
-async function calculateDataForSaleMetrics(objectId: string, purchasePrice: number, priceForSale: number) {
+async function calculateDataForSaleMetrics(
+  objectId: string,
+  purchasePrice: number,
+  priceForSale: number,
+) {
   const records = await RecordModel.find({ objectId }).lean().exec();
   const transformedRecords = transformMongooseDoc(records);
   if (transformedRecords.length === 0) {
@@ -67,18 +71,29 @@ async function calculateDataForSaleMetrics(objectId: string, purchasePrice: numb
 
   const countOfMonth = recordsWithProfit.length;
   const profitPerMonth =
-    recordsWithProfit.reduce((sum: number, record: any) => sum + record.totalProfit, 0) / countOfMonth;
+    recordsWithProfit.reduce(
+      (sum: number, record: any) => sum + record.totalProfit,
+      0,
+    ) / countOfMonth;
   const last12MonthsRecords = getLast12MonthsRecords(recordsWithProfit);
-  const totalProfitPerYear = last12MonthsRecords.reduce((sum: number, record: any) => sum + record.totalProfit, 0);
+  const totalProfitPerYear = last12MonthsRecords.reduce(
+    (sum: number, record: any) => sum + record.totalProfit,
+    0,
+  );
   const payback5Year = totalProfitPerYear * 5;
   const payback7Year = totalProfitPerYear * 7;
   const payback10Year = totalProfitPerYear * 10;
   const averageProfitLast12Months =
     last12MonthsRecords.length > 0
-      ? last12MonthsRecords.reduce((sum: number, record: any) => sum + record.totalProfit, 0) /
-      last12MonthsRecords.length
+      ? last12MonthsRecords.reduce(
+          (sum: number, record: any) => sum + record.totalProfit,
+          0,
+        ) / last12MonthsRecords.length
       : 0;
-  const percentPerYear = priceForSale > 0 ? ((averageProfitLast12Months * 100) / (priceForSale * 0.94)) * 12 : 0;
+  const percentPerYear =
+    priceForSale > 0
+      ? ((averageProfitLast12Months * 100) / (priceForSale * 0.94)) * 12
+      : 0;
   return {
     countOfMonth,
     profitPerMonth,
@@ -90,7 +105,9 @@ async function calculateDataForSaleMetrics(objectId: string, purchasePrice: numb
   };
 }
 
-export async function createDataForSale(objectId: string): Promise<{ id: string }> {
+export async function createDataForSale(
+  objectId: string,
+): Promise<{ id: string }> {
   await connectDB();
   try {
     const dataForSale = new DataForSaleModel({
@@ -108,7 +125,10 @@ export async function createDataForSale(objectId: string): Promise<{ id: string 
     await dataForSale.save();
     return { id: dataForSale.id };
   } catch (error: any) {
-    throw new DataForSaleServiceError(error.message || 'Ошибка на сервере', 500);
+    throw new DataForSaleServiceError(
+      error.message || 'Ошибка на сервере',
+      500,
+    );
   }
 }
 
@@ -128,7 +148,11 @@ export async function updateDataForSale(
     if (updateData.priceForSale !== undefined) {
       dataForSale.priceForSale = updateData.priceForSale;
     }
-    const metrics = await calculateDataForSaleMetrics(objectId, dataForSale.purchasePrice, dataForSale.priceForSale);
+    const metrics = await calculateDataForSaleMetrics(
+      objectId,
+      dataForSale.purchasePrice,
+      dataForSale.priceForSale,
+    );
     Object.assign(dataForSale, metrics);
     await dataForSale.save();
     return { message: 'Данные продажи обновлены' };
@@ -136,18 +160,27 @@ export async function updateDataForSale(
     if (error instanceof DataForSaleServiceError) {
       throw error;
     }
-    throw new DataForSaleServiceError(error.message || 'Ошибка на сервере', 500);
+    throw new DataForSaleServiceError(
+      error.message || 'Ошибка на сервере',
+      500,
+    );
   }
 }
 
-export async function recalculateDataForSale(objectId: string): Promise<{ message: string }> {
+export async function recalculateDataForSale(
+  objectId: string,
+): Promise<{ message: string }> {
   await connectDB();
   try {
     const dataForSale = await DataForSaleModel.findOne({ objectId }).exec();
     if (!dataForSale) {
       throw new DataForSaleServiceError('Данные продажи не найдены', 404);
     }
-    const metrics = await calculateDataForSaleMetrics(objectId, dataForSale.purchasePrice, dataForSale.priceForSale);
+    const metrics = await calculateDataForSaleMetrics(
+      objectId,
+      dataForSale.purchasePrice,
+      dataForSale.priceForSale,
+    );
     Object.assign(dataForSale, metrics);
     await dataForSale.save();
     return { message: 'Данные продажи пересчитаны' };
@@ -155,7 +188,10 @@ export async function recalculateDataForSale(objectId: string): Promise<{ messag
     if (error instanceof DataForSaleServiceError) {
       throw error;
     }
-    throw new DataForSaleServiceError(error.message || 'Ошибка на сервере', 500);
+    throw new DataForSaleServiceError(
+      error.message || 'Ошибка на сервере',
+      500,
+    );
   }
 }
 
@@ -171,6 +207,9 @@ export async function getDataForSaleByObjectId(objectId: string) {
     if (error instanceof DataForSaleServiceError) {
       throw error;
     }
-    throw new DataForSaleServiceError(error.message || 'Ошибка на сервере', 500);
+    throw new DataForSaleServiceError(
+      error.message || 'Ошибка на сервере',
+      500,
+    );
   }
 }

@@ -1,3 +1,4 @@
+'use server';
 import GetUserId from '@/app/lib/utils/getUserId';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
@@ -15,9 +16,6 @@ async function apiRequest(endpoint: string, options: RequestInit = {}) {
     },
   };
   const response = await fetch(url, config);
-  if (!response.ok) {
-    throw await response.json();
-  }
   return response.json();
 }
 
@@ -38,7 +36,7 @@ export async function LoginUser(data: { email: string; password: string }) {
 
 // ===== USERS API =====
 export async function GetUserById() {
-  const targetUserId = GetUserId();
+  const targetUserId = await GetUserId();
   return apiRequest(`/api/users/${targetUserId}`, {
     method: 'GET',
   });

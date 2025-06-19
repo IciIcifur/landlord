@@ -1,7 +1,11 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { requireAdmin, requireUser } from '@/app/lib/utils/auth';
-import { createObject, getAllObjects, ObjectServiceError } from '@/app/lib/services/object-service';
+import {
+  createObject,
+  getAllObjects,
+  ObjectServiceError,
+} from '@/app/lib/services/object-service';
 import { errorResponse, successResponse } from '@/app/lib/utils/response';
 
 export async function GET(req: NextRequest) {
@@ -9,7 +13,11 @@ export async function GET(req: NextRequest) {
   if (user instanceof NextResponse) {
     return user;
   }
-  const { id: userId, role } = user as { id: string; email: string; role: string };
+  const { id: userId, role } = user as {
+    id: string;
+    email: string;
+    role: string;
+  };
   try {
     const objects = await getAllObjects(userId, role);
     return successResponse(objects);

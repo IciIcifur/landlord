@@ -5,36 +5,41 @@ import GetUserId from '@/app/lib/utils/getUserId';
 import ObjectsLoader from '@/app/loaders/objectsLoader';
 import MainNavbar from '@/app/ui/mainNavbar';
 import FooterNavbar from '@/app/ui/footerNavbar';
-import GetUserRole from '@/app/lib/utils/getUserRole';
-import { GetAllObjects } from '@/app/lib/actions/clientApi';
+import { GetAllObjects, GetUserById } from '@/app/lib/actions/clientApi';
 
 async function getUser() {
   const userId = await GetUserId();
-  if (!userId) {
-    return null;
+  if (userId) {
+    try {
+      const response: any = await GetUserById();
+      if ('errors' in response)
+        console.error('Не удалось получить пользователя...', response.errors);
+      else
+        return {
+          id: userId,
+          email: response.email,
+          role: response.role === 'ADMIN' ? UserRole.ADMIN : UserRole.CLIENT,
+        } as User;
+    } catch (e) {
+      console.error('Не удалось получить пользователя...');
+    }
   }
 
-  await GetUserRole;
-
-  // TODO: get user data by id
-  const user: User = {
-    id: userId,
-    email: 'abracadabra@gmail.com',
-    role: UserRole.ADMIN,
-  };
-
-  return user;
+  return null;
 }
 
-async function getObjects() {
+async function getObjects(): Promise<RentalObject[]> {
   const userId = await GetUserId();
 
+  if (!userId) return [];
   try {
-    const allObjects: RentalObject[] = await GetAllObjects(userId);
-    if (allObjects) return allObjects;
-    else console.error('Не удалось получить объекты...');
+    const response: RentalObject[] | { errors: any } =
+      await GetAllObjects(userId);
+    if ('errors' in response)
+      console.error('Не удалось получить объекты...', response.errors);
+    else return response;
   } catch (e) {
-    console.error(e);
+    console.error('Не удалось получить объекты...');
   }
   return [];
 }
