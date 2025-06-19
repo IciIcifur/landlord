@@ -8,6 +8,7 @@ import { dataForSaleFormSchema } from '@/app/lib/utils/zodSchemas';
 import { Button } from '@heroui/button';
 import objectsStore from '@/app/stores/objectsStore';
 import { RussianRubleIcon } from 'lucide-react';
+import { UpdateDataForSale } from '@/app/lib/actions/clientApi';
 
 export default function DataForSaleForm({
   dataForSale,
@@ -34,13 +35,29 @@ export default function DataForSaleForm({
     );
   }, [purchasePrice, priceForSale, setErrors]);
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
+    if (!objectsStore.activeObject) return;
     setIsLoading(true);
-    // TODO: post request
-    objectsStore.updateActiveObjectDataForSale({
-      purchasePrice,
-      priceForSale,
-    });
+    try {
+      const response: any = await UpdateDataForSale(
+        objectsStore.activeObject.id,
+        {
+          purchasePrice,
+          priceForSale,
+        },
+      );
+      if (!('errors' in response)) {
+        objectsStore.updateActiveObjectDataForSale({
+          purchasePrice,
+          priceForSale,
+        });
+      } else {
+        setErrors(response.errors);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
     setIsLoading(false);
   };
 

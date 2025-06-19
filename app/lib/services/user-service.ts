@@ -34,7 +34,9 @@ export async function getUserById(userId: string) {
     throw new UserServiceError('ID пользователя обязателен', 400);
   }
   try {
-    const user = await UserModel.findById(userId).select('id email role').lean();
+    const user = await UserModel.findById(userId)
+      .select('id email role')
+      .lean();
     if (!user) {
       throw new UserServiceError('Пользователь не найден', 404);
     }

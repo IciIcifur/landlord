@@ -20,7 +20,6 @@ class UserStore {
   }
 
   setUser(user: User): void {
-    // TODO: get id and role via getRequest
     this.user = user;
     this.isAuthenticated = true;
   }

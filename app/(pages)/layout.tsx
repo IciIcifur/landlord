@@ -33,8 +33,7 @@ async function getObjects(): Promise<RentalObject[]> {
 
   if (!userId) return [];
   try {
-    const response: RentalObject[] | { errors: any } =
-      await GetAllObjects(userId);
+    const response: RentalObject[] | { errors: any } = await GetAllObjects();
     if ('errors' in response)
       console.error('Не удалось получить объекты...', response.errors);
     else return response;

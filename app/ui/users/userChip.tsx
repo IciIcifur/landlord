@@ -20,11 +20,7 @@ export default function UserChip({
       size="md"
       isDisabled={user.id === userStore.user?.id}
       onClose={() => onDelete(user.id)}
-      endContent={
-        user.id !== userStore.user?.id
-          ? ((<XIcon className="h-5 stroke-default-500" />) as ReactNode)
-          : undefined
-      }
+      endContent={(<XIcon className="h-5 stroke-default-500" />) as ReactNode}
     >
       {user.email}
     </Chip>

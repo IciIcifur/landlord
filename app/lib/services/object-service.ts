@@ -1,6 +1,9 @@
 import ObjectModel from '@/app/models/ObjectModel';
 import UserModel, { UserRole } from '@/app/models/UserModel';
-import { createDataForSale, getDataForSaleByObjectId } from './data-for-sale-service';
+import {
+  createDataForSale,
+  getDataForSaleByObjectId,
+} from './data-for-sale-service';
 import { getRecordsByObjectId } from './record-service';
 import connectDB from '@/app/lib/utils/db';
 import { transformMongooseDoc } from '@/app/lib/utils/transformMongooseDoc';
@@ -50,9 +53,13 @@ export async function getAllObjects(userId: string, userRole: string) {
   try {
     let objects;
     if (userRole === UserRole.ADMIN) {
-      objects = await ObjectModel.find({}).select('id name address square description users').lean();
+      objects = await ObjectModel.find({})
+        .select('id name address square description users')
+        .lean();
     } else {
-      objects = await ObjectModel.find({ users: userId }).select('id name address square description').lean();
+      objects = await ObjectModel.find({ users: userId })
+        .select('id name address square description')
+        .lean();
     }
     objects = transformMongooseDoc(objects);
     if (userRole === UserRole.ADMIN) {
@@ -76,7 +83,9 @@ export async function getAllObjects(userId: string, userRole: string) {
       }
       objects = objects.map((obj: any) => ({
         ...obj,
-        users: (obj.users || []).map((uid: string) => usersById[uid]).filter(Boolean),
+        users: (obj.users || [])
+          .map((uid: string) => usersById[uid])
+          .filter(Boolean),
       }));
     }
     return objects;
@@ -85,14 +94,17 @@ export async function getAllObjects(userId: string, userRole: string) {
   }
 }
 
-export async function createObject(objectData: CreateObjectData): Promise<{ id: string }> {
+export async function createObject(
+  objectData: CreateObjectData,
+): Promise<{ id: string }> {
   await connectDB();
   const { name, address, square } = objectData;
   const validationErrors: Record<string, string> = {};
   if (!name) validationErrors.name = 'Название обязательно';
   if (!address) validationErrors.address = 'Адрес обязателен';
   if (isNaN(square)) validationErrors.square = 'Площадь обязательна';
-  if (square < 0) validationErrors.square = 'Площадь не может быть отрицательной';
+  if (square < 0)
+    validationErrors.square = 'Площадь не может быть отрицательной';
   if (Object.keys(validationErrors).length) {
     throw new ObjectServiceError('Ошибки валидации', 400, validationErrors);
   }
@@ -114,15 +126,24 @@ export async function createObject(objectData: CreateObjectData): Promise<{ id: 
   }
 }
 
-export async function getObjectById(objectId: string, userId: string, userRole: string): Promise<ObjectWithDetails> {
+export async function getObjectById(
+  objectId: string,
+  userId: string,
+  userRole: string,
+): Promise<ObjectWithDetails> {
   await connectDB();
   try {
-    const obj: any = await ObjectModel.findById(objectId).select('id name address square description users').lean();
+    const obj: any = await ObjectModel.findById(objectId)
+      .select('id name address square description users')
+      .lean();
     if (!obj) {
       throw new ObjectServiceError('Объект не найден', 404);
     }
     const transformedObj = transformMongooseDoc(obj);
-    if (userRole !== UserRole.ADMIN && !(transformedObj.users || []).includes(userId)) {
+    if (
+      userRole !== UserRole.ADMIN &&
+      !(transformedObj.users || []).includes(userId)
+    ) {
       throw new ObjectServiceError('Ошибка доступа', 403);
     }
     transformedObj.records = await getRecordsByObjectId(objectId);
@@ -131,15 +152,22 @@ export async function getObjectById(objectId: string, userId: string, userRole: 
         transformedObj.dataForSale = await getDataForSaleByObjectId(objectId);
       } catch (error) {
         const { id: dataForSaleId } = await createDataForSale(objectId);
-        await ObjectModel.findByIdAndUpdate(objectId, { dataForSale: dataForSaleId });
+        await ObjectModel.findByIdAndUpdate(objectId, {
+          dataForSale: dataForSaleId,
+        });
         transformedObj.dataForSale = await getDataForSaleByObjectId(objectId);
       }
       if (transformedObj.users && transformedObj.users.length) {
-        const users = await UserModel.find({ _id: { $in: transformedObj.users } })
+        const users = await UserModel.find({
+          _id: { $in: transformedObj.users },
+        })
           .select('id email')
           .lean()
           .exec();
-        transformedObj.users = transformMongooseDoc(users).map((u: any) => ({ id: u.id, email: u.email }));
+        transformedObj.users = transformMongooseDoc(users).map((u: any) => ({
+          id: u.id,
+          email: u.email,
+        }));
       }
     } else {
       delete transformedObj.users;
@@ -153,7 +181,10 @@ export async function getObjectById(objectId: string, userId: string, userRole: 
   }
 }
 
-export async function updateObject(objectId: string, updateData: UpdateObjectData): Promise<{ message: string }> {
+export async function updateObject(
+  objectId: string,
+  updateData: UpdateObjectData,
+): Promise<{ message: string }> {
   await connectDB();
   const allowedFields = ['name', 'address', 'square', 'description'];
   const changes: any = {};
@@ -177,7 +208,9 @@ export async function updateObject(objectId: string, updateData: UpdateObjectDat
   }
 }
 
-export async function deleteObject(objectId: string): Promise<{ message: string }> {
+export async function deleteObject(
+  objectId: string,
+): Promise<{ message: string }> {
   await connectDB();
   try {
     const obj = await ObjectModel.findById(objectId);
@@ -196,7 +229,10 @@ export async function deleteObject(objectId: string): Promise<{ message: string 
   }
 }
 
-export async function addUserToObject(objectId: string, userId: string): Promise<{ message: string }> {
+export async function addUserToObject(
+  objectId: string,
+  userId: string,
+): Promise<{ message: string }> {
   await connectDB();
   if (!userId) {
     throw new ObjectServiceError('id пользователя обязателен', 400);
@@ -206,7 +242,11 @@ export async function addUserToObject(objectId: string, userId: string): Promise
     if (!user) {
       throw new ObjectServiceError('Пользователь не найден', 404);
     }
-    const obj = await ObjectModel.findByIdAndUpdate(objectId, { $addToSet: { users: userId } }, { new: true })
+    const obj = await ObjectModel.findByIdAndUpdate(
+      objectId,
+      { $addToSet: { users: userId } },
+      { new: true },
+    )
       .lean()
       .exec();
     if (!obj) {
@@ -221,10 +261,17 @@ export async function addUserToObject(objectId: string, userId: string): Promise
   }
 }
 
-export async function removeUserFromObject(objectId: string, userId: string): Promise<{ message: string }> {
+export async function removeUserFromObject(
+  objectId: string,
+  userId: string,
+): Promise<{ message: string }> {
   await connectDB();
   try {
-    const obj = await ObjectModel.findByIdAndUpdate(objectId, { $pull: { users: userId } }, { new: true })
+    const obj = await ObjectModel.findByIdAndUpdate(
+      objectId,
+      { $pull: { users: userId } },
+      { new: true },
+    )
       .lean()
       .exec();
     if (!obj) {
@@ -236,7 +283,11 @@ export async function removeUserFromObject(objectId: string, userId: string): Pr
   }
 }
 
-export async function checkUserAccessToObject(objectId: string, userId: string, userRole: string): Promise<boolean> {
+export async function checkUserAccessToObject(
+  objectId: string,
+  userId: string,
+  userRole: string,
+): Promise<boolean> {
   await connectDB();
   try {
     if (userRole === UserRole.ADMIN) {

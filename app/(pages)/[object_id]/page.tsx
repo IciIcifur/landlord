@@ -12,7 +12,7 @@ async function getObject(objectId: string) {
   const userId = await GetUserId();
   if (userId && objectId) {
     try {
-      const response: any = await GetObjectById(userId, objectId);
+      const response: any = await GetObjectById(objectId);
 
       if ('errors' in response)
         console.error(

@@ -19,6 +19,7 @@ import {
 } from '@/app/ui/objects/objectRecordsTable';
 import { ChevronDownIcon, RussianRubleIcon } from 'lucide-react';
 import { clsx } from 'clsx';
+import { CreateRecord } from '@/app/lib/actions/clientApi';
 
 type EditableRecord = Omit<
   ObjectRecord,
@@ -68,14 +69,27 @@ export default function AddRecordModal({
     setErrors(CheckFormFields({ ...newRecord }, recordFormSchema));
   }, [newRecord]);
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
+    if (!objectsStore.activeObject) return;
     setIsLoading(true);
-    // TODO: post request to server and get id
-    objectsStore.addActiveObjectRecord({
-      id: Date.now().toString(),
-      date: new Date().toISOString(),
-      ...newRecord,
-    });
+    try {
+      const response: any = await CreateRecord({
+        objectId: objectsStore.activeObject.id,
+        ...newRecord,
+      });
+      if (!('errors' in response)) {
+        objectsStore.addActiveObjectRecord({
+          id: response.id,
+          date: new Date().toISOString(),
+          ...newRecord,
+        });
+      } else {
+        setErrors(response.errors);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
     setIsLoading(false);
     onOpenChange();
   };

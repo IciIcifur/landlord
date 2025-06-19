@@ -8,7 +8,7 @@ async function getUsers() {
   const userId = await GetUserId();
   if (userId) {
     try {
-      const response: any = await GetAllUsers(userId);
+      const response: any = await GetAllUsers();
 
       if ('errors' in response)
         console.error('Не удалось получить пользователей...', response.errors);

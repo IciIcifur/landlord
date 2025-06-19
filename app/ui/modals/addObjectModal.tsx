@@ -13,6 +13,7 @@ import CheckFormFields from '@/app/lib/utils/checkFormFields';
 import { objectMainFormSchema } from '@/app/lib/utils/zodSchemas';
 import { NumberInput } from '@heroui/number-input';
 import objectsStore from '@/app/stores/objectsStore';
+import { CreateObject } from '@/app/lib/actions/clientApi';
 
 export default function AddObjectModal({
   isOpen,
@@ -37,16 +38,28 @@ export default function AddObjectModal({
     );
   }, [name, address, square, setErrors]);
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     setIsLoading(true);
-    // TODO: post request to server and get id
-    objectsStore.addObject({
-      id: Date.now().toString(),
-      name,
-      address,
-      square,
-      users: [],
-    });
+    try {
+      const response: any = await CreateObject({
+        name,
+        address,
+        square,
+      });
+      if (!('errors' in response)) {
+        objectsStore.addObject({
+          id: response.id,
+          name,
+          address,
+          square,
+          users: [],
+        });
+      } else {
+        setErrors(response.errors);
+      }
+    } catch (e) {
+      console.error(e);
+    }
     setIsLoading(false);
     onOpenChange();
   };

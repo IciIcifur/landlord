@@ -13,6 +13,7 @@ import CheckFormFields from '@/app/lib/utils/checkFormFields';
 import { LoginFormSchema } from '@/app/lib/utils/zodSchemas';
 import userStore from '@/app/stores/userStore';
 import { EyeIcon, EyeIcon as EyeClosedIcon } from 'lucide-react';
+import { CreateOrUpdateUser } from '@/app/lib/actions/clientApi';
 
 export default function NewUserModal({
   isOpen,
@@ -32,13 +33,24 @@ export default function NewUserModal({
     setErrors(CheckFormFields({ email, password }, LoginFormSchema));
   }, [email, password]);
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     setIsLoading(true);
-    // TODO: post request to server and get id
-    const id = Date.now().toString();
-    userStore.addUser(id, email);
+    try {
+      const response: any = await CreateOrUpdateUser({
+        email,
+        password,
+      });
+      if (!('errors' in response)) {
+        userStore.addUser(response.id, email);
+        onOpenChange();
+      } else {
+        setErrors(response.errors);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
     setIsLoading(false);
-    onOpenChange();
   };
 
   return (
