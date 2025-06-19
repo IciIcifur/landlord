@@ -154,7 +154,12 @@ export default function AddRecordModal({
           </Form>
         </ModalBody>
         <ModalFooter className="flex w-full justify-between gap-2">
-          <Button isDisabled={isLoading} size="md" variant="bordered">
+          <Button
+            onPress={onOpenChange}
+            isDisabled={isLoading}
+            size="md"
+            variant="bordered"
+          >
             Отмена
           </Button>
           <Button

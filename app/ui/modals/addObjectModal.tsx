@@ -29,7 +29,6 @@ export default function AddObjectModal({
   const [square, setSquare] = useState(0);
 
   useEffect(() => {
-    console.log(errors);
     setErrors(
       CheckFormFields(
         { name: name, address: address, square: square },
@@ -89,7 +88,12 @@ export default function AddObjectModal({
           </Form>
         </ModalBody>
         <ModalFooter className="flex w-full justify-between gap-2">
-          <Button isDisabled={isLoading} size="md" variant="bordered">
+          <Button
+            onPress={onOpenChange}
+            isDisabled={isLoading}
+            size="md"
+            variant="bordered"
+          >
             Отмена
           </Button>
           <Button
