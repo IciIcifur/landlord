@@ -1,4 +1,4 @@
-import { ObjectRecord } from '@/app/lib/utils/definitions';
+import { ObjectRecord, UserRole } from '@/app/lib/utils/definitions';
 import {
   SortDescriptor as TableSortDescriptor,
   Table,
@@ -27,6 +27,7 @@ import { useDisclosure } from '@heroui/modal';
 import AddRecordModal from '@/app/ui/modals/addRecordModal';
 import { observer } from 'mobx-react-lite';
 import objectsStore from '@/app/stores/objectsStore';
+import userStore from '@/app/stores/userStore';
 
 export const RecordColumns: {
   name: keyof ObjectRecord;
@@ -193,16 +194,17 @@ const ObjectRecordsTable = observer(() => {
         topContent={
           (
             <div className="flex w-full justify-end gap-2">
-              {selectedRecords.size > 0 && (
-                <Button
-                  onPress={handleDeleteRecords}
-                  isIconOnly
-                  color="danger"
-                  size="sm"
-                >
-                  <TrashIcon className="w-4" />
-                </Button>
-              )}
+              {selectedRecords.size > 0 &&
+                userStore.user?.role === UserRole.ADMIN && (
+                  <Button
+                    onPress={handleDeleteRecords}
+                    isIconOnly
+                    color="danger"
+                    size="sm"
+                  >
+                    <TrashIcon className="w-4" />
+                  </Button>
+                )}
               <Dropdown>
                 <DropdownTrigger>
                   <Button
