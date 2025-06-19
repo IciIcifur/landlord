@@ -1,6 +1,7 @@
 import DataForSaleModel from "@/app/models/DataForSaleModel"
 import RecordModel from "@/app/models/RecordModel"
 import connectDB from "@/app/lib/utils/db"
+import {transformMongooseDoc} from "@/app/lib/utils/transformMongooseDoc";
 
 export interface UpdateDataForSaleData {
     purchasePrice?: number
@@ -19,21 +20,6 @@ export class DataForSaleServiceError extends Error {
         this.name = "DataForSaleServiceError"
         this.errors = validationErrors
     }
-}
-
-function transformMongooseDoc(doc: any): any {
-    if (!doc) return doc
-    if (Array.isArray(doc)) {
-        return doc.map(transformMongooseDoc)
-    }
-    if (doc._id) {
-        const transformed = {...doc}
-        transformed.id = doc._id.toString()
-        delete transformed._id
-        delete transformed.__v
-        return transformed
-    }
-    return doc
 }
 
 function getLast12MonthsRecords(records: any[]): any[] {

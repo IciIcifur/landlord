@@ -3,6 +3,7 @@ import ObjectModel from "@/app/models/ObjectModel"
 import {recalculateDataForSale} from "./data-for-sale-service"
 import {checkUserAccessToObject} from "./object-service"
 import connectDB from "@/app/lib/utils/db"
+import {transformMongooseDoc} from "@/app/lib/utils/transformMongooseDoc";
 
 export interface CreateRecordData {
     objectId: string
@@ -31,21 +32,6 @@ export class RecordServiceError extends Error {
         this.name = "RecordServiceError"
         this.errors = validationErrors
     }
-}
-
-function transformMongooseDoc(doc: any): any {
-    if (!doc) return doc
-    if (Array.isArray(doc)) {
-        return doc.map(transformMongooseDoc)
-    }
-    if (doc._id) {
-        const transformed = {...doc}
-        transformed.id = doc._id.toString()
-        delete transformed._id
-        delete transformed.__v
-        return transformed
-    }
-    return doc
 }
 
 export async function createRecord(

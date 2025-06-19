@@ -2,6 +2,7 @@ import UserModel, {UserRole} from "@/app/models/UserModel"
 import ObjectModel from "@/app/models/ObjectModel"
 import connectDB from "@/app/lib/utils/db"
 import {hashPassword, validatePassword} from "./auth-service"
+import {transformMongooseDoc} from "@/app/lib/utils/transformMongooseDoc";
 
 export interface CreateUserData {
     email: string
@@ -15,6 +16,7 @@ export interface CreateUserResult {
 
 export class UserServiceError extends Error {
     public errors?: Record<string, string>
+
     constructor(
         message: string,
         public statusCode = 400,
@@ -29,7 +31,8 @@ export class UserServiceError extends Error {
 export async function getAllUsers() {
     await connectDB()
     try {
-        return await UserModel.find({}).select("id email role")
+        const users = await UserModel.find({}).select("id email role").lean()
+        return transformMongooseDoc(users)
     } catch (error: any) {
         throw new UserServiceError(error.message || "Ошибка на сервере", 500)
     }
@@ -83,7 +86,6 @@ export async function deleteUser(userId: string): Promise<{ userId: string; mess
         if (!deletedUser) {
             throw new UserServiceError("Пользователь не найден", 404, {id: "Пользователь не найден"})
         }
-
         await ObjectModel.updateMany({users: userId}, {$pull: {users: userId}})
         return {userId, message: "Пользователь удален"}
     } catch (error: any) {

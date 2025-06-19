@@ -3,6 +3,7 @@ import UserModel, {UserRole} from "@/app/models/UserModel"
 import {createDataForSale, getDataForSaleByObjectId} from "./data-for-sale-service"
 import {getRecordsByObjectId} from "./record-service"
 import connectDB from "@/app/lib/utils/db"
+import {transformMongooseDoc} from "@/app/lib/utils/transformMongooseDoc";
 
 export interface CreateObjectData {
     name: string
@@ -40,21 +41,6 @@ export class ObjectServiceError extends Error {
         this.name = "ObjectServiceError"
         this.errors = validationErrors
     }
-}
-
-function transformMongooseDoc(doc: any): any {
-    if (!doc) return doc
-    if (Array.isArray(doc)) {
-        return doc.map(transformMongooseDoc)
-    }
-    if (doc._id) {
-        const transformed = {...doc}
-        transformed.id = doc._id.toString()
-        delete transformed._id
-        delete transformed.__v
-        return transformed
-    }
-    return doc
 }
 
 export async function getAllObjects(userId: string, userRole: string) {
@@ -252,7 +238,8 @@ export async function checkUserAccessToObject(objectId: string, userId: string, 
         if (!obj) {
             return false
         }
-        return (obj.users || []).includes(userId)
+        const objData = obj as any
+        return (objData.users || []).includes(userId)
     } catch (error) {
         return false
     }
