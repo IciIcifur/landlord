@@ -43,7 +43,7 @@ ObjectSchema.set('toJSON', {
   versionKey: false,
   transform: function (doc, ret) {
     delete ret._id;
-  }
+  },
 });
 
 const ObjectModel = models.Object || model('Object', ObjectSchema);

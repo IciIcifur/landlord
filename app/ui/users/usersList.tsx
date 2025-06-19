@@ -10,14 +10,23 @@ import { SearchIcon, UserPlusIcon } from 'lucide-react';
 import { Button } from '@heroui/button';
 import { useDisclosure } from '@heroui/modal';
 import NewUserModal from '@/app/ui/modals/newUserModal';
+import { DeleteUser } from '@/app/lib/actions/clientApi';
 
 const UsersList = observer(() => {
   const [searchValue, setSearchValue] = useState('');
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  const handleDeleteUser = (id: string) => {
-    // TODO: delete request
-    userStore.deleteUser(id);
+  const handleDeleteUser = async (id: string) => {
+    try {
+      const response: any = await DeleteUser(id);
+      if (!('errors' in response)) {
+        userStore.deleteUser(id);
+      } else {
+        console.error(response.errors);
+      }
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (
@@ -58,7 +67,13 @@ const UsersList = observer(() => {
             .map(
               (user) =>
                 (
-                  <ListboxItem key={user.id} textValue={user.email}>
+                  <ListboxItem
+                    key={user.id}
+                    textValue={user.email}
+                    color={
+                      userStore.user?.id !== user.id ? 'default' : 'secondary'
+                    }
+                  >
                     <UserCard user={user} onDelete={handleDeleteUser} />
                   </ListboxItem>
                 ) as any,

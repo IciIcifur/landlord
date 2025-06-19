@@ -8,6 +8,7 @@ import CheckFormFields from '@/app/lib/utils/checkFormFields';
 import { objectMainFormSchema } from '@/app/lib/utils/zodSchemas';
 import { Button } from '@heroui/button';
 import objectsStore from '@/app/stores/objectsStore';
+import { UpdateObject } from '@/app/lib/actions/clientApi';
 
 export default function ObjectMainForm({
   isReadonly,
@@ -35,16 +36,30 @@ export default function ObjectMainForm({
     );
   }, [name, address, square, description, setErrors]);
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     if (isReadonly) return;
     setIsLoading(true);
-    // TODO: post request
-    objectsStore.updateObjectById(object.id, {
-      name,
-      address,
-      square,
-      description,
-    });
+    try {
+      const response: any = await UpdateObject(object.id, {
+        name,
+        address,
+        square,
+        description,
+      });
+      if (!('errors' in response)) {
+        objectsStore.updateObjectById(object.id, {
+          name,
+          address,
+          square,
+          description,
+        });
+      } else {
+        setErrors(response.errors);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
     setIsLoading(false);
   };
 

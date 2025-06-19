@@ -8,12 +8,17 @@ import { observer } from 'mobx-react-lite';
 import { Autocomplete, AutocompleteItem } from '@heroui/autocomplete';
 import userStore from '@/app/stores/userStore';
 import { User } from '@/app/lib/utils/definitions';
+import {
+  AddUserToObject,
+  RemoveUserFromObject,
+} from '@/app/lib/actions/clientApi';
 
 const ObjectUserInfo = observer(({ objectId }: { objectId: string }) => {
   const object = useMemo(
     () => objectsStore.getObjectById(objectId),
     [objectId],
   );
+  const [isLoading, setIsLoading] = useState(false);
   const [newUserId, setNewUserId] = useState('');
 
   useEffect(() => {
@@ -25,13 +30,33 @@ const ObjectUserInfo = observer(({ objectId }: { objectId: string }) => {
   }, [newUserId]);
 
   const handleAddObjectUser = async (id: string) => {
-    // TODO: put request
-    const user = userStore.allUsers.find((user) => user.id === id);
-    if (user) objectsStore.addObjectUser(object.id, user);
+    setIsLoading(true);
+    try {
+      const response: any = await AddUserToObject(object.id, id);
+      if (!('errors' in response)) {
+        const user = userStore.allUsers.find((user) => user.id === id);
+        if (user) objectsStore.addObjectUser(object.id, user);
+      } else {
+        console.error(response.errors);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    setIsLoading(false);
   };
   const handleDeleteObjectUser = async (id: string) => {
-    // TODO: delete request
-    objectsStore.deleteObjectUser(object.id, id);
+    setIsLoading(true);
+    try {
+      const response: any = await RemoveUserFromObject(object.id, id);
+      if (!('errors' in response)) {
+        objectsStore.deleteObjectUser(object.id, id);
+      } else {
+        console.error(response.errors);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    setIsLoading(false);
   };
 
   return (
@@ -65,6 +90,7 @@ const ObjectUserInfo = observer(({ objectId }: { objectId: string }) => {
           isVirtualized={true}
           name="user_search"
           aria-label="user_search"
+          isLoading={isLoading}
         >
           {userStore.allUsers
             .filter(

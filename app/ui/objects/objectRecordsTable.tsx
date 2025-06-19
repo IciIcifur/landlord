@@ -28,6 +28,7 @@ import AddRecordModal from '@/app/ui/modals/addRecordModal';
 import { observer } from 'mobx-react-lite';
 import objectsStore from '@/app/stores/objectsStore';
 import userStore from '@/app/stores/userStore';
+import { DeleteRecord } from '@/app/lib/actions/clientApi';
 
 export const RecordColumns: {
   name: keyof ObjectRecord;
@@ -166,10 +167,17 @@ const ObjectRecordsTable = observer(() => {
     });
   };
 
-  const handleDeleteRecords = () => {
-    // TODO: delete request
-    objectsStore.deleteActiveObjectRecord(selectedRecords);
-    setSelectedRecords(new Set());
+  const handleDeleteRecords = async () => {
+    try {
+      for (const recordId of selectedRecords.values()) {
+        await DeleteRecord(recordId);
+      }
+
+      objectsStore.deleteActiveObjectRecord(selectedRecords);
+      setSelectedRecords(new Set());
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (
