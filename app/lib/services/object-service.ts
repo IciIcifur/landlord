@@ -50,9 +50,9 @@ export async function getAllObjects(userId: string, userRole: string) {
   try {
     let objects;
     if (userRole === UserRole.ADMIN) {
-      objects = await ObjectModel.find({}).select('id name address square users').lean();
+      objects = await ObjectModel.find({}).select('id name address square description users').lean();
     } else {
-      objects = await ObjectModel.find({ users: userId }).select('id name address square').lean();
+      objects = await ObjectModel.find({ users: userId }).select('id name address square description').lean();
     }
     objects = transformMongooseDoc(objects);
     if (userRole === UserRole.ADMIN) {

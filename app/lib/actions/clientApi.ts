@@ -1,3 +1,5 @@
+import GetUserId from '@/app/lib/utils/getUserId';
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 async function apiRequest(endpoint: string, options: RequestInit = {}) {
@@ -35,6 +37,13 @@ export async function LoginUser(data: { email: string; password: string }) {
 }
 
 // ===== USERS API =====
+export async function GetUserById() {
+  const targetUserId = GetUserId();
+  return apiRequest(`/api/users/${targetUserId}`, {
+    method: 'GET',
+  });
+}
+
 export async function GetAllUsers(userId: string) {
   return apiRequest('/api/users', {
     method: 'GET',
@@ -52,6 +61,7 @@ export async function CreateOrUpdateUser(
     body: JSON.stringify(data),
   });
 }
+
 export async function DeleteUser(userId: string, targetUserId: string) {
   return apiRequest(`/api/users/${targetUserId}`, {
     method: 'DELETE',

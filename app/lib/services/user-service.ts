@@ -28,6 +28,25 @@ export class UserServiceError extends Error {
   }
 }
 
+export async function getUserById(userId: string) {
+  await connectDB();
+  if (!userId) {
+    throw new UserServiceError('ID пользователя обязателен', 400);
+  }
+  try {
+    const user = await UserModel.findById(userId).select('id email role').lean();
+    if (!user) {
+      throw new UserServiceError('Пользователь не найден', 404);
+    }
+    return transformMongooseDoc(user);
+  } catch (error: any) {
+    if (error instanceof UserServiceError) {
+      throw error;
+    }
+    throw new UserServiceError(error.message || 'Ошибка на сервере', 500);
+  }
+}
+
 export async function getAllUsers() {
   await connectDB();
   try {
