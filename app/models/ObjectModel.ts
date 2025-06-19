@@ -34,16 +34,16 @@ const ObjectSchema = new Schema({
   },
 });
 
-ObjectSchema.virtual('id').get(function () {
+ObjectSchema.virtual('id').get(function() {
   return this._id.toHexString();
 });
 
 ObjectSchema.set('toJSON', {
   virtuals: true,
   versionKey: false,
-  transform: function (doc, ret) {
+  transform: function(doc, ret) {
     delete ret._id;
-  }
+  },
 });
 
 const ObjectModel = models.Object || model('Object', ObjectSchema);
