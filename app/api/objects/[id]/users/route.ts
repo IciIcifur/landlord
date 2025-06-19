@@ -7,7 +7,7 @@ import {errorResponse, successResponse} from "@/app/lib/utils/response";
 export async function POST(req: NextRequest, context: any) {
     const admin = await requireAdmin(req);
     if (admin instanceof NextResponse) return admin;
-    const params = context.params;
+    const params = await context.params;
     const objectId = params.id;
 
     try {

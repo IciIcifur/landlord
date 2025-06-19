@@ -10,9 +10,9 @@ export async function DELETE(req: NextRequest, context: any) {
         return admin;
     }
     try {
-        const params = context.params;
-        const userId = await params.id;
-        const result = await deleteUser(userId);
+        const params = await context.params;
+        const targetUserId = params.id;
+        const result = await deleteUser(targetUserId);
         return successResponse(result);
     } catch (error: any) {
         if (error instanceof UserServiceError) {

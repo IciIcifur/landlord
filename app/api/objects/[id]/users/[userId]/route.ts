@@ -7,7 +7,7 @@ import {errorResponse, successResponse} from "@/app/lib/utils/response";
 export async function DELETE(req: NextRequest, context: any) {
     const adminOrError = await requireAdmin(req);
     if (adminOrError instanceof NextResponse) return adminOrError;
-    const params = context.params;
+    const params = await context.params;
     const objectId = params.id;
     const userId = params.userId;
 

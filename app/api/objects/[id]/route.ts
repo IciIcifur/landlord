@@ -10,7 +10,6 @@ export async function GET(req: NextRequest, context: any) {
     const {id: userId, role} = user as { id: string; email: string; role: string };
     const params = await context.params;
     const objectId = params.id;
-
     try {
         const obj = await getObjectById(objectId, userId, role);
         return successResponse(obj);
@@ -25,9 +24,8 @@ export async function GET(req: NextRequest, context: any) {
 export async function PATCH(req: NextRequest, context: any) {
     const admin = await requireAdmin(req);
     if (admin instanceof NextResponse) return admin;
-    const params = context.params;
+    const params = await context.params;
     const objectId = params.id;
-
     try {
         const updateData = await req.json();
         const result = await updateObject(objectId, updateData);
@@ -43,9 +41,8 @@ export async function PATCH(req: NextRequest, context: any) {
 export async function DELETE(req: NextRequest, context: any) {
     const admin = await requireAdmin(req);
     if (admin instanceof NextResponse) return admin;
-    const params = context.params;
+    const params = await context.params;
     const objectId = params.id;
-
     try {
         const result = await deleteObject(objectId);
         return successResponse(result);
