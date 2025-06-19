@@ -1,11 +1,6 @@
 import {model, models, Schema} from "mongoose"
 
 const RecordSchema = new Schema({
-    id: {
-        type: String,
-        required: true,
-        unique: true,
-    },
     objectId: {
         type: String,
         required: true,
@@ -25,7 +20,7 @@ const RecordSchema = new Schema({
         min: [0, "Стоимость тепла не может быть отрицательной"],
         default: 0,
     },
-    explotation: {
+    exploitation: {
         type: Number,
         min: [0, "Стоимость содержания не может быть отрицательной"],
         default: 0,
@@ -67,6 +62,52 @@ const RecordSchema = new Schema({
         type: Number,
         min: [0, "Стоимость охраны не может быть отрицательной"],
         default: 0,
+    },
+})
+
+RecordSchema.virtual("id").get(function () {
+    return this._id.toHexString()
+})
+
+RecordSchema.virtual("totalExpenses").get(function () {
+    return (
+        this.heat +
+        this.exploitation +
+        this.mop +
+        this.renovation +
+        this.tbo +
+        this.electricity +
+        this.earthRent +
+        this.otherExpenses +
+        this.security
+    )
+})
+
+RecordSchema.virtual("totalIncomes").get(function () {
+    return this.rent + this.otherIncomes
+})
+
+RecordSchema.virtual("totalProfit").get(function () {
+    const totalIncomes = this.rent + this.otherIncomes
+    const totalExpenses =
+        this.heat +
+        this.exploitation +
+        this.mop +
+        this.renovation +
+        this.tbo +
+        this.electricity +
+        this.earthRent +
+        this.otherExpenses +
+        this.security
+
+    return totalIncomes - totalExpenses
+})
+
+RecordSchema.set("toJSON", {
+    virtuals: true,
+    versionKey: false,
+    transform: (doc, ret) => {
+        delete ret._id
     },
 })
 

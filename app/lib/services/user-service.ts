@@ -15,7 +15,6 @@ export interface CreateUserResult {
 
 export class UserServiceError extends Error {
     public errors?: Record<string, string>
-
     constructor(
         message: string,
         public statusCode = 400,
@@ -38,20 +37,15 @@ export async function getAllUsers() {
 
 export async function createOrUpdateUser(userData: CreateUserData): Promise<CreateUserResult> {
     await connectDB()
-
     const {email, password} = userData
     const validationErrors: Record<string, string> = {}
-
     const passwordError = validatePassword(password)
     if (passwordError) validationErrors.password = passwordError
     if (!email) validationErrors.email = "Поле email обязательно"
-
     if (Object.keys(validationErrors).length) {
         throw new UserServiceError("Ошибки валидации", 400, validationErrors)
     }
-
     const hashedPassword = await hashPassword(password)
-
     try {
         const user = await UserModel.findOne({email}).exec()
         if (user) {
@@ -81,11 +75,9 @@ export async function createOrUpdateUser(userData: CreateUserData): Promise<Crea
 
 export async function deleteUser(userId: string): Promise<{ userId: string; message: string }> {
     await connectDB()
-
     if (!userId) {
         throw new UserServiceError("ID пользователя обязателен", 400, {id: "ID пользователя обязателен"})
     }
-
     try {
         const deletedUser = await UserModel.findByIdAndDelete(userId)
         if (!deletedUser) {
@@ -93,7 +85,6 @@ export async function deleteUser(userId: string): Promise<{ userId: string; mess
         }
 
         await ObjectModel.updateMany({users: userId}, {$pull: {users: userId}})
-
         return {userId, message: "Пользователь удален"}
     } catch (error: any) {
         if (error instanceof UserServiceError) {

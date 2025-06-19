@@ -20,7 +20,6 @@ export interface LoginResult {
 
 export class AuthError extends Error {
     public errors?: Record<string, string>
-
     constructor(
         message: string,
         public field?: string,
@@ -55,13 +54,10 @@ export async function verifyPassword(password: string, hashedPassword: string): 
 
 export async function loginUser(credentials: LoginCredentials): Promise<LoginResult> {
     await connectDB()
-
     const {email, password} = credentials
     const validationErrors: Record<string, string> = {}
-
     if (!email) validationErrors.email = "Поле email обязательно"
     if (!password) validationErrors.password = "Поле пароль обязательно"
-
     if (Object.keys(validationErrors).length) {
         throw new AuthError("Ошибки валидации", undefined, 400, validationErrors)
     }
@@ -88,17 +84,13 @@ export async function loginUser(credentials: LoginCredentials): Promise<LoginRes
 
 export async function getUserById(userId: string): Promise<AuthUser> {
     await connectDB()
-
     if (!userId) {
         throw new AuthError("ID пользователя обязателен", undefined, 401)
     }
-
     const user = await UserModel.findById(userId).select("id email role").lean()
     if (!user) {
         throw new AuthError("Пользователь не найден", undefined, 401)
     }
-
-    // Приводим к нужному типу, так как mongoose возвращает объект с _id
     const userData = user as any
     return {
         id: userData.id || userData._id?.toString() || "",
@@ -113,7 +105,6 @@ export async function requireUserAccess(userId: string): Promise<AuthUser> {
 
 export async function requireAdminAccess(userId: string): Promise<AuthUser> {
     const user = await getUserById(userId)
-
     if (user.role !== UserRole.ADMIN) {
         throw new AuthError("Ошибка доступа: требуется роль ADMIN", undefined, 403)
     }

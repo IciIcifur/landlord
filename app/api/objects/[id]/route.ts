@@ -8,7 +8,7 @@ export async function GET(req: NextRequest, context: any) {
     const user = await requireUser(req);
     if (user instanceof NextResponse) return user;
     const {id: userId, role} = user as { id: string; email: string; role: string };
-    const params = context.params;
+    const params = await context.params;
     const objectId = params.id;
 
     try {
