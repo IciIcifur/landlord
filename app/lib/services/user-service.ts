@@ -87,7 +87,7 @@ export async function deleteUser(userId: string): Promise<{ userId: string; mess
             throw new UserServiceError("Пользователь не найден", 404, {id: "Пользователь не найден"})
         }
         await ObjectModel.updateMany({users: userId}, {$pull: {users: userId}})
-        return {userId, message: "Пользователь удален"}
+        return {message: "Пользователь удален"}
     } catch (error: any) {
         if (error instanceof UserServiceError) {
             throw error

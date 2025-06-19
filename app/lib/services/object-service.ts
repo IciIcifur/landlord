@@ -4,6 +4,8 @@ import {createDataForSale, getDataForSaleByObjectId} from "./data-for-sale-servi
 import {getRecordsByObjectId} from "./record-service"
 import connectDB from "@/app/lib/utils/db"
 import {transformMongooseDoc} from "@/app/lib/utils/transformMongooseDoc";
+import RecordModel from "@/app/models/RecordModel";
+import DataForSaleModel from "@/app/models/DataForSaleModel";
 
 export interface CreateObjectData {
     name: string
@@ -178,12 +180,18 @@ export async function updateObject(objectId: string, updateData: UpdateObjectDat
 export async function deleteObject(objectId: string): Promise<{ message: string }> {
     await connectDB()
     try {
-        const obj = await ObjectModel.findByIdAndDelete(objectId)
+        const obj = await ObjectModel.findById(objectId)
         if (!obj) {
             throw new ObjectServiceError("Объект не найден", 404)
         }
-        return {message: "Объект удален"}
+        await RecordModel.deleteMany({ objectId })
+        await DataForSaleModel.deleteMany({ objectId })
+        await ObjectModel.findByIdAndDelete(objectId)
+        return { message: "Объект и все связанные данные удалены" }
     } catch (error: any) {
+        if (error instanceof ObjectServiceError) {
+            throw error
+        }
         throw new ObjectServiceError(error.message || "Ошибка на сервере", 500)
     }
 }
