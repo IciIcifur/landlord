@@ -1,7 +1,10 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { requireUser } from '@/app/lib/utils/auth';
-import { createRecord, RecordServiceError } from '@/app/lib/services/record-service';
+import {
+  createRecord,
+  RecordServiceError,
+} from '@/app/lib/services/record-service';
 import { errorResponse, successResponse } from '@/app/lib/utils/response';
 
 export async function POST(req: NextRequest) {
@@ -9,7 +12,11 @@ export async function POST(req: NextRequest) {
   if (user instanceof NextResponse) {
     return user;
   }
-  const { id: userId, role } = user as { id: string; email: string; role: string };
+  const { id: userId, role } = user as {
+    id: string;
+    email: string;
+    role: string;
+  };
   try {
     const recordData = await req.json();
     const result = await createRecord(recordData, userId, role);

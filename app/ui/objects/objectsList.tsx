@@ -14,6 +14,7 @@ import userStore from '@/app/stores/userStore';
 import { observer } from 'mobx-react-lite';
 import ObjectCard from '@/app/ui/objects/objectCard';
 import AddObjectModal from '@/app/ui/modals/addObjectModal';
+import { DeleteObject } from '@/app/lib/actions/clientApi';
 
 const ObjectsList = observer(() => {
   const [activeObjectId, setActiveObjectId] = useState<string | undefined>(
@@ -35,12 +36,20 @@ const ObjectsList = observer(() => {
     onOpenChange: onDeleteOpenChange,
   } = useDisclosure();
 
-  const handleDelete = () => {
-    // TODO: delete activeObjectId
+  const handleDelete = async () => {
     if (activeObjectId) {
-      objectsStore.deleteObjectById(activeObjectId);
+      try {
+        const response: any = await DeleteObject(activeObjectId);
+        if (!('errors' in response)) {
+          objectsStore.deleteObjectById(activeObjectId);
+          onDeleteOpenChange();
+        } else {
+          console.error(response.errors);
+        }
+      } catch (e) {
+        console.error(e);
+      }
     }
-    onDeleteOpenChange();
   };
 
   return (

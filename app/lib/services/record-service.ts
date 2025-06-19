@@ -78,7 +78,9 @@ export async function createRecord(
 export async function getRecordsByObjectId(objectId: string) {
   await connectDB();
   try {
-    const records = await RecordModel.find({ objectId }).sort({ date: -1 }).lean();
+    const records = await RecordModel.find({ objectId })
+      .sort({ date: -1 })
+      .lean();
     return transformMongooseDoc(records);
   } catch (error: any) {
     throw new RecordServiceError(error.message || 'Ошибка на сервере', 500);
@@ -101,7 +103,9 @@ export async function getRecordById(recordId: string) {
   }
 }
 
-export async function deleteRecord(recordId: string): Promise<{ message: string }> {
+export async function deleteRecord(
+  recordId: string,
+): Promise<{ message: string }> {
   await connectDB();
   try {
     const record = await RecordModel.findById(recordId).exec();

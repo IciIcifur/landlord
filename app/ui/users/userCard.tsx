@@ -2,6 +2,7 @@
 import { User } from '@/app/lib/utils/definitions';
 import { Button } from '@heroui/button';
 import { TrashIcon } from 'lucide-react';
+import userStore from '@/app/stores/userStore';
 
 export default function UserCard({
   user,
@@ -16,15 +17,18 @@ export default function UserCard({
         <h2 className="text-small font-medium">{user.email}</h2>
         <p className="text-xs text-default-500">ID: {user.id}</p>
       </div>
-      <Button
-        color="danger"
-        variant="flat"
-        isIconOnly
-        className="invisible group-hover:visible"
-        onPress={() => onDelete(user.id)}
-      >
-        <TrashIcon className="size-4" />
-      </Button>
+
+      {userStore.user?.id !== user.id && (
+        <Button
+          color="danger"
+          variant="flat"
+          isIconOnly
+          className="invisible group-hover:visible"
+          onPress={() => onDelete(user.id)}
+        >
+          <TrashIcon className="size-4" />
+        </Button>
+      )}
     </div>
   );
 }

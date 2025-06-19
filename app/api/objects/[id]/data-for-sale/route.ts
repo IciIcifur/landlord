@@ -2,9 +2,9 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/app/lib/utils/auth';
 import {
-    DataForSaleServiceError,
-    getDataForSaleByObjectId,
-    updateDataForSale,
+  DataForSaleServiceError,
+  getDataForSaleByObjectId,
+  updateDataForSale,
 } from '@/app/lib/services/data-for-sale-service';
 import { errorResponse, successResponse } from '@/app/lib/utils/response';
 

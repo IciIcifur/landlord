@@ -26,6 +26,8 @@
     "@heroui/table": "^2.2.20",
     "@heroui/tabs": "^2.2.18",
     "@heroui/theme": "^2.4.17",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
     "@types/tailwindcss": "^3.1.0",
     "axios": "^1.10.0",
     "bcryptjs": "^3.0.2",
@@ -45,18 +47,16 @@
     "react-dom": "^19.1.0",
     "swr": "^2.3.3",
     "tailwindcss": "3.4.17",
+    "typescript": "^5.8.3",
     "zod": "^3.25.64"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@types/node": "^20.19.1",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
     "eslint": "^9.29.0",
     "eslint-config-next": "15.3.1",
     "husky": "^9.1.7",
-    "prettier-plugin-tailwindcss": "^0.6.12",
-    "typescript": "^5.8.3"
+    "prettier-plugin-tailwindcss": "^0.6.12"
   },
   "packageManager": "pnpm@9.15.2+sha512.93e57b0126f0df74ce6bff29680394c0ba54ec47246b9cf321f0121d8d9bb03f750a705f24edc3c1180853afd7c2c3b94196d0a3d53d3e069d9e2793ef11f321"
 }

@@ -5,71 +5,42 @@ import GetUserId from '@/app/lib/utils/getUserId';
 import ObjectsLoader from '@/app/loaders/objectsLoader';
 import MainNavbar from '@/app/ui/mainNavbar';
 import FooterNavbar from '@/app/ui/footerNavbar';
+import { GetAllObjects, GetUserById } from '@/app/lib/actions/clientApi';
 
 async function getUser() {
   const userId = await GetUserId();
-  if (!userId) {
-    return null;
+  if (userId) {
+    try {
+      const response: any = await GetUserById();
+      if ('errors' in response)
+        console.error('Не удалось получить пользователя...', response.errors);
+      else
+        return {
+          id: userId,
+          email: response.email,
+          role: response.role === 'ADMIN' ? UserRole.ADMIN : UserRole.CLIENT,
+        } as User;
+    } catch (e) {
+      console.error('Не удалось получить пользователя...');
+    }
   }
 
-  // TODO: get user data by id
-  const user: User = {
-    id: userId,
-    email: 'abracadabra@gmail.com',
-    role: UserRole.ADMIN,
-  };
-
-  return user;
+  return null;
 }
 
-async function getObjects() {
+async function getObjects(): Promise<RentalObject[]> {
   const userId = await GetUserId();
-  return [
-    {
-      id: '1',
-      name: 'Офис в центре Москвы',
-      square: 50,
-      address: 'ул. Тверская, д. 7, Москва',
-      description: 'Современный офис с ремонтом и парковкой',
-      users: [
-        { id: '1', email: 'ivan.petrov@example.com' },
-        { id: '2', email: 'elena.smirnova@example.com' },
-        { id: '3', email: 'alexey.ivanov@example.com' },
-        { id: '4', email: 'maria.kuznetsova@example.com' },
-      ],
-    },
-    {
-      id: '2',
-      name: 'Склад на юге города',
-      square: 75,
-      address: 'ул. Южная, д. 15, Санкт-Петербург',
-      description: 'Теплый склад с погрузочной зоной',
-      users: [],
-    },
-    {
-      id: '3',
-      name: 'Коворкинг у метро',
-      square: 32,
-      address: 'пр-т Ленина, д. 3, Екатеринбург',
-      users: [],
-    },
-    {
-      id: '4',
-      name: 'Магазин на первой линии',
-      square: 98,
-      address: 'ул. Советская, д. 10, Казань',
-      description: 'Помещение под торговлю с витринами',
-      users: [],
-    },
-    {
-      id: '5',
-      name: 'Офис в бизнес-центре',
-      square: 64,
-      address: 'пр-т Мира, д. 21, Новосибирск',
-      description: 'Уютный офис с панорамными окнами',
-      users: [],
-    },
-  ] as RentalObject[];
+
+  if (!userId) return [];
+  try {
+    const response: RentalObject[] | { errors: any } = await GetAllObjects();
+    if ('errors' in response)
+      console.error('Не удалось получить объекты...', response.errors);
+    else return response;
+  } catch (e) {
+    console.error('Не удалось получить объекты...');
+  }
+  return [];
 }
 
 export default async function MainLayout({

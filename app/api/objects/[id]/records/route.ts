@@ -1,7 +1,10 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { requireUser } from '@/app/lib/utils/auth';
-import { getRecordsByObjectId, RecordServiceError } from '@/app/lib/services/record-service';
+import {
+  getRecordsByObjectId,
+  RecordServiceError,
+} from '@/app/lib/services/record-service';
 import { errorResponse, successResponse } from '@/app/lib/utils/response';
 
 export async function GET(req: NextRequest, context: any) {

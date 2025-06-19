@@ -65,11 +65,11 @@ const RecordSchema = new Schema({
   },
 });
 
-RecordSchema.virtual('id').get(function() {
+RecordSchema.virtual('id').get(function () {
   return this._id.toHexString();
 });
 
-RecordSchema.virtual('totalExpenses').get(function() {
+RecordSchema.virtual('totalExpenses').get(function () {
   return (
     this.heat +
     this.exploitation +
@@ -83,11 +83,11 @@ RecordSchema.virtual('totalExpenses').get(function() {
   );
 });
 
-RecordSchema.virtual('totalIncomes').get(function() {
+RecordSchema.virtual('totalIncomes').get(function () {
   return this.rent + this.otherIncomes;
 });
 
-RecordSchema.virtual('totalProfit').get(function() {
+RecordSchema.virtual('totalProfit').get(function () {
   const totalIncomes = this.rent + this.otherIncomes;
   const totalExpenses =
     this.heat +

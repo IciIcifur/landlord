@@ -1,7 +1,10 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/app/lib/utils/auth';
-import { addUserToObject, ObjectServiceError } from '@/app/lib/services/object-service';
+import {
+  addUserToObject,
+  ObjectServiceError,
+} from '@/app/lib/services/object-service';
 import { errorResponse, successResponse } from '@/app/lib/utils/response';
 
 export async function POST(req: NextRequest, context: any) {

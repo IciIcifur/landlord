@@ -14,6 +14,7 @@ import { objectMainFormSchema } from '@/app/lib/utils/zodSchemas';
 import { NumberInput } from '@heroui/number-input';
 import { RentalObject } from '@/app/lib/utils/definitions';
 import objectsStore from '@/app/stores/objectsStore';
+import { UpdateObject } from '@/app/lib/actions/clientApi';
 
 export default function EditObjectModal({
   object,
@@ -40,10 +41,22 @@ export default function EditObjectModal({
     );
   }, [name, address, square, setErrors]);
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     setIsLoading(true);
-    // TODO: post request to server
-    objectsStore.updateObjectById(object.id, { name, address, square });
+    try {
+      const response: any = await UpdateObject(object.id, {
+        name,
+        address,
+        square,
+      });
+      if (!('errors' in response)) {
+        objectsStore.updateObjectById(object.id, { name, address, square });
+      } else {
+        setErrors(response.errors);
+      }
+    } catch (e) {
+      console.error(e);
+    }
     setIsLoading(false);
     onOpenChange();
   };

@@ -46,7 +46,7 @@ const DataForSaleSchema = new Schema({
   },
 });
 
-DataForSaleSchema.virtual('id').get(function() {
+DataForSaleSchema.virtual('id').get(function () {
   return this._id.toHexString();
 });
 
@@ -58,6 +58,7 @@ DataForSaleSchema.set('toJSON', {
   },
 });
 
-const DataForSaleModel = models.DataForSale || model('DataForSale', DataForSaleSchema);
+const DataForSaleModel =
+  models.DataForSale || model('DataForSale', DataForSaleSchema);
 
 export default DataForSaleModel;

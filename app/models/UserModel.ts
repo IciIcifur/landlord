@@ -10,7 +10,10 @@ const UserSchema = new Schema({
     type: String,
     required: true,
     unique: true,
-    maxlength: [100, 'Адрес электронной почты не должен превышать 100 символов'],
+    maxlength: [
+      100,
+      'Адрес электронной почты не должен превышать 100 символов',
+    ],
   },
   password: {
     type: String,
@@ -23,14 +26,14 @@ const UserSchema = new Schema({
   },
 });
 
-UserSchema.virtual('id').get(function() {
+UserSchema.virtual('id').get(function () {
   return this._id.toHexString();
 });
 
 UserSchema.set('toJSON', {
   virtuals: true,
   versionKey: false,
-  transform: function(doc, ret) {
+  transform: function (doc, ret) {
     delete ret._id;
   },
 });
