@@ -66,7 +66,7 @@ export async function getAllObjects(userId: string, userRole: string) {
         } else {
             objects = await ObjectModel.find({users: userId}).select("id name address square").lean()
         }
-
+        objects = transformMongooseDoc(objects)
         if (userRole === UserRole.ADMIN) {
             const userIdsSet = new Set<string>()
             objects.forEach((obj: any) => {
@@ -81,7 +81,8 @@ export async function getAllObjects(userId: string, userRole: string) {
                     .select("id email")
                     .lean()
                     .exec()
-                users.forEach((u: any) => {
+                const transformedUsers = transformMongooseDoc(users)
+                transformedUsers.forEach((u: any) => {
                     usersById[u.id] = {id: u.id, email: u.email}
                 })
             }
@@ -132,29 +133,30 @@ export async function getObjectById(objectId: string, userId: string, userRole: 
         if (!obj) {
             throw new ObjectServiceError("Объект не найден", 404)
         }
-        if (userRole !== UserRole.ADMIN && !(obj.users || []).includes(userId)) {
+        const transformedObj = transformMongooseDoc(obj)
+        if (userRole !== UserRole.ADMIN && !(transformedObj.users || []).includes(userId)) {
             throw new ObjectServiceError("Ошибка доступа", 403)
         }
-        obj.records = await getRecordsByObjectId(objectId)
+        transformedObj.records = await getRecordsByObjectId(objectId)
         if (userRole === UserRole.ADMIN) {
             try {
-                obj.dataForSale = await getDataForSaleByObjectId(objectId)
+                transformedObj.dataForSale = await getDataForSaleByObjectId(objectId)
             } catch (error) {
                 const {id: dataForSaleId} = await createDataForSale(objectId)
                 await ObjectModel.findByIdAndUpdate(objectId, {dataForSale: dataForSaleId})
-                obj.dataForSale = await getDataForSaleByObjectId(objectId)
+                transformedObj.dataForSale = await getDataForSaleByObjectId(objectId)
             }
-            if (obj.users && obj.users.length) {
-                const users = await UserModel.find({_id: {$in: obj.users}})
+            if (transformedObj.users && transformedObj.users.length) {
+                const users = await UserModel.find({_id: {$in: transformedObj.users}})
                     .select("id email")
                     .lean()
                     .exec()
-                obj.users = users.map((u) => ({id: u.id, email: u.email}))
+                transformedObj.users = transformMongooseDoc(users).map((u: any) => ({id: u.id, email: u.email}))
             }
         } else {
-            delete obj.users
+            delete transformedObj.users
         }
-        return obj
+        return transformedObj
     } catch (error: any) {
         if (error instanceof ObjectServiceError) {
             throw error

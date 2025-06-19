@@ -21,6 +21,21 @@ export class DataForSaleServiceError extends Error {
     }
 }
 
+function transformMongooseDoc(doc: any): any {
+    if (!doc) return doc
+    if (Array.isArray(doc)) {
+        return doc.map(transformMongooseDoc)
+    }
+    if (doc._id) {
+        const transformed = {...doc}
+        transformed.id = doc._id.toString()
+        delete transformed._id
+        delete transformed.__v
+        return transformed
+    }
+    return doc
+}
+
 function getLast12MonthsRecords(records: any[]): any[] {
     const now = new Date()
     const twelveMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 12, 1)
@@ -32,7 +47,8 @@ function getLast12MonthsRecords(records: any[]): any[] {
 
 async function calculateDataForSaleMetrics(objectId: string, purchasePrice: number, priceForSale: number) {
     const records = await RecordModel.find({objectId}).lean().exec()
-    if (records.length === 0) {
+    const transformedRecords = transformMongooseDoc(records)
+    if (transformedRecords.length === 0) {
         return {
             countOfMonth: 0,
             profitPerMonth: 0,
@@ -43,8 +59,8 @@ async function calculateDataForSaleMetrics(objectId: string, purchasePrice: numb
             percentPerYear: 0,
         }
     }
-    const recordsWithProfit = records
-        .map((record) => ({
+    const recordsWithProfit = transformedRecords
+        .map((record: any) => ({
             ...record,
             totalExpenses:
                 record.heat +
@@ -58,21 +74,23 @@ async function calculateDataForSaleMetrics(objectId: string, purchasePrice: numb
                 record.security,
             totalIncomes: record.rent + record.otherIncomes,
         }))
-        .map((record) => ({
+        .map((record: any) => ({
             ...record,
             totalProfit: record.totalIncomes - record.totalExpenses,
         }))
 
     const countOfMonth = recordsWithProfit.length
-    const profitPerMonth = recordsWithProfit.reduce((sum, record) => sum + record.totalProfit, 0) / countOfMonth
+    const profitPerMonth =
+        recordsWithProfit.reduce((sum: number, record: any) => sum + record.totalProfit, 0) / countOfMonth
     const last12MonthsRecords = getLast12MonthsRecords(recordsWithProfit)
-    const totalProfitPerYear = last12MonthsRecords.reduce((sum, record) => sum + record.totalProfit, 0)
+    const totalProfitPerYear = last12MonthsRecords.reduce((sum: number, record: any) => sum + record.totalProfit, 0)
     const payback5Year = totalProfitPerYear * 5
     const payback7Year = totalProfitPerYear * 7
     const payback10Year = totalProfitPerYear * 10
     const averageProfitLast12Months =
         last12MonthsRecords.length > 0
-            ? last12MonthsRecords.reduce((sum, record) => sum + record.totalProfit, 0) / last12MonthsRecords.length
+            ? last12MonthsRecords.reduce((sum: number, record: any) => sum + record.totalProfit, 0) /
+            last12MonthsRecords.length
             : 0
     const percentPerYear = priceForSale > 0 ? ((averageProfitLast12Months * 100) / (priceForSale * 0.94)) * 12 : 0
     return {
@@ -127,7 +145,7 @@ export async function updateDataForSale(
         const metrics = await calculateDataForSaleMetrics(objectId, dataForSale.purchasePrice, dataForSale.priceForSale)
         Object.assign(dataForSale, metrics)
         await dataForSale.save()
-        return {message: "DataForSale обновлен"}
+        return {message: "Данные продажи обновлены"}
     } catch (error: any) {
         if (error instanceof DataForSaleServiceError) {
             throw error
@@ -162,7 +180,7 @@ export async function getDataForSaleByObjectId(objectId: string) {
         if (!dataForSale) {
             throw new DataForSaleServiceError("Данные продажи не найдены", 404)
         }
-        return dataForSale
+        return transformMongooseDoc(dataForSale)
     } catch (error: any) {
         if (error instanceof DataForSaleServiceError) {
             throw error

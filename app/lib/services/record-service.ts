@@ -33,6 +33,21 @@ export class RecordServiceError extends Error {
     }
 }
 
+function transformMongooseDoc(doc: any): any {
+    if (!doc) return doc
+    if (Array.isArray(doc)) {
+        return doc.map(transformMongooseDoc)
+    }
+    if (doc._id) {
+        const transformed = {...doc}
+        transformed.id = doc._id.toString()
+        delete transformed._id
+        delete transformed.__v
+        return transformed
+    }
+    return doc
+}
+
 export async function createRecord(
     recordData: CreateRecordData,
     userId: string,
@@ -77,7 +92,8 @@ export async function createRecord(
 export async function getRecordsByObjectId(objectId: string) {
     await connectDB()
     try {
-        return await RecordModel.find({objectId}).sort({date: -1}).lean()
+        const records = await RecordModel.find({objectId}).sort({date: -1}).lean()
+        return transformMongooseDoc(records)
     } catch (error: any) {
         throw new RecordServiceError(error.message || "Ошибка на сервере", 500)
     }
@@ -90,7 +106,7 @@ export async function getRecordById(recordId: string) {
         if (!record) {
             throw new RecordServiceError("Запись не найдена", 404)
         }
-        return record
+        return transformMongooseDoc(record)
     } catch (error: any) {
         if (error instanceof RecordServiceError) {
             throw error
