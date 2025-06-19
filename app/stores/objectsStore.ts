@@ -1,5 +1,10 @@
-import { action, makeAutoObservable, observable } from 'mobx';
-import { RentalObject, User } from '@/app/lib/utils/definitions';
+import { action, computed, makeAutoObservable, observable } from 'mobx';
+import {
+  DataForSale,
+  ObjectRecord,
+  RentalObject,
+  User,
+} from '@/app/lib/utils/definitions';
 
 class ObjectsStore {
   allObjects: RentalObject[] = [];
@@ -11,6 +16,11 @@ class ObjectsStore {
       activeObject: observable,
       setAllObjects: action,
       setActiveObject: action,
+      activeObjectDataForSale: computed,
+      updateActiveObjectDataForSale: action,
+      addActiveObjectRecord: action,
+      deleteActiveObjectRecord: action,
+      addObject: action,
       updateObjectById: action,
       deleteObjectById: action,
       deleteObjectUser: action,
@@ -20,19 +30,96 @@ class ObjectsStore {
   }
 
   setAllObjects = (objects: any[]) => {
-    // TODO: parse objects via zod
     this.allObjects = [...objects];
   };
 
   setActiveObject = (object: any) => {
-    // TODO: parse object via zod
     this.activeObject = object;
   };
+  updateActiveObjectDataForSale = (newAttrs: Partial<DataForSale>) => {
+    if (!this.activeObject) return;
+    this.activeObject.dataForSale = {
+      ...this.activeObject.dataForSale,
+      ...newAttrs,
+    } as DataForSale;
+  };
+  addActiveObjectRecord = (newRecord: ObjectRecord) => {
+    if (!this.activeObject) return;
+    if (!this.activeObject.records) this.activeObject.records = [];
+    this.activeObject.records = [...this.activeObject.records, newRecord];
+  };
+  deleteActiveObjectRecord = (recordsId: Set<string> | undefined) => {
+    if (!this.activeObject?.records || !recordsId) return;
+    this.activeObject.records = this.activeObject.records.filter(
+      (record) => !recordsId.has(record.id),
+    );
+  };
+  get activeObjectDataForSale() {
+    if (!this.activeObject?.dataForSale) return;
+    if (!this.activeObject.records)
+      return {
+        purchasePrice: this.activeObject.dataForSale.purchasePrice,
+        priceForSale: this.activeObject.dataForSale.priceForSale,
+        countOfMonth: 0,
+        profitPerMonth: 0,
+        totalProfit: 0,
+        payback5Year: 0,
+        payback7Year: 0,
+        payback10Year: 0,
+        percentPerYear: 0,
+      };
+
+    function mean(array: number[] = []): number {
+      let m = 0;
+      for (let i of array) m += i;
+      return (m / array.length) | 0;
+    }
+
+    function last12Months(array: ObjectRecord[]): ObjectRecord[] {
+      const now = new Date();
+      const lastYear = new Date(
+        now.getFullYear(),
+        now.getMonth() - 11,
+        now.getDay(),
+      );
+      return array.filter((record) => {
+        const recordDate = new Date(record.date);
+        return recordDate >= lastYear && recordDate;
+      });
+    }
+
+    const totalProfitPerYear = mean(
+      last12Months(this.activeObject.records).map(
+        (record) => record.totalProfit || 0,
+      ),
+    );
+    const dataForSale: DataForSale = {
+      purchasePrice: this.activeObject.dataForSale.purchasePrice,
+      priceForSale: this.activeObject.dataForSale.priceForSale,
+      countOfMonth: this.activeObject.records.length,
+      profitPerMonth: mean(
+        this.activeObject.records.map((record) => record.totalProfit || 0),
+      ),
+      totalProfit: totalProfitPerYear,
+      payback5Year: totalProfitPerYear * 5,
+      payback7Year: totalProfitPerYear * 7,
+      payback10Year: totalProfitPerYear * 10,
+      percentPerYear:
+        ((totalProfitPerYear * 100) /
+          this.activeObject.dataForSale.priceForSale) *
+        0.94 *
+        12,
+    };
+    return dataForSale;
+  }
 
   getObjectById = (id: string): RentalObject => {
     const object = this.allObjects.find((object) => object.id == id);
     if (object) return object;
     throw new Error(`Объект ${id} не найден`);
+  };
+  addObject = (newObject: RentalObject) => {
+    this.allObjects.push(newObject);
   };
   updateObjectById = (objectId: string, newAttrs: Partial<RentalObject>) => {
     const objectIndex = this.allObjects.findIndex(

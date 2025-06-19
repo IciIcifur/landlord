@@ -45,7 +45,7 @@ const UsersList = observer(() => {
         </div>
         <Listbox
           isVirtualized
-          virtualization={{ maxListboxHeight: 588, itemHeight: 56 }}
+          virtualization={{ maxListboxHeight: 466, itemHeight: 56 }}
           variant="faded"
           aria-label="all_users"
         >

@@ -28,12 +28,12 @@ export default function ObjectCard({
   return (
     <Card className="w-full">
       <CardBody className="flex flex-col gap-1 p-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-between">
           <div className="flex w-full flex-nowrap items-center gap-2">
             <h3 className="text-lg font-medium">{object.name}</h3>
             <p className="text-xs text-default-400">ID: {object.id}</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex w-full justify-end gap-2 sm:w-fit sm:justify-center">
             <Button
               as={Link}
               href={`/${object.id}`}
