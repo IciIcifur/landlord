@@ -8,7 +8,6 @@ import {
   TableRow,
 } from '@heroui/table';
 import { ReactNode, useMemo, useState } from 'react';
-import { mockObjectRecords } from '@/app/lib/utils/generateMockRecords';
 import { Pagination } from '@heroui/pagination';
 import {
   Dropdown,
@@ -17,59 +16,69 @@ import {
   DropdownTrigger,
 } from '@heroui/dropdown';
 import { Button } from '@heroui/button';
-import { ChevronDownIcon, Columns3Cog } from 'lucide-react';
+import { ChevronDownIcon, Columns3Cog, PlusIcon } from 'lucide-react';
+import { useDisclosure } from '@heroui/modal';
+import AddRecordModal from '@/app/ui/modals/addRecordModal';
+import { observer } from 'mobx-react-lite';
+import objectsStore from '@/app/stores/objectsStore';
 
-export default function ObjectRecordsTable({
-  records,
-}: {
-  records: ObjectRecord[];
-}) {
-  const columns: {
-    name: keyof ObjectRecord;
-    title: string;
-    sortable: boolean;
-  }[] = [
-    { name: 'date', title: 'Дата', sortable: true },
-    { name: 'rent', title: 'Аренда', sortable: true },
-    { name: 'heat', title: 'Отопление', sortable: true },
-    { name: 'electricity', title: 'Электричество', sortable: true },
-    { name: 'tbo', title: 'ТБО', sortable: true },
-    { name: 'exploitation', title: 'Эксплуатация', sortable: true },
-    { name: 'mop', title: 'МОП', sortable: true },
-    { name: 'renovation', title: 'Кап. ремонт', sortable: true },
-    { name: 'security', title: 'Охрана', sortable: true },
-    { name: 'earthRent', title: 'Аренда земли', sortable: true },
-    { name: 'otherExpenses', title: 'Другие расходы', sortable: true },
-    { name: 'otherIncomes', title: 'Другие доходы', sortable: true },
-    { name: 'totalExpenses', title: 'Итого расходы', sortable: true },
-    { name: 'totalIncomes', title: 'Итого доходы', sortable: true },
-    { name: 'totalProfit', title: 'Итого прибыль', sortable: true },
-  ];
-  const initialVisibleColumns = new Set<keyof ObjectRecord>([
-    'date',
-    'rent',
-    'heat',
-    'renovation',
-    'electricity',
-    'security',
-    'totalProfit',
-  ]);
+export const RecordColumns: {
+  name: keyof ObjectRecord;
+  title: string;
+}[] = [
+  { name: 'date', title: 'Дата' },
+  { name: 'rent', title: 'Аренда' },
+  { name: 'heat', title: 'Отопление' },
+  { name: 'electricity', title: 'Электричество' },
+  { name: 'tbo', title: 'ТБО' },
+  { name: 'exploitation', title: 'Эксплуатация' },
+  { name: 'mop', title: 'МОП' },
+  { name: 'renovation', title: 'Кап. ремонт' },
+  { name: 'security', title: 'Охрана' },
+  { name: 'earthRent', title: 'Аренда земли' },
+  { name: 'otherExpenses', title: 'Другие расходы' },
+  { name: 'otherIncomes', title: 'Другие доходы' },
+  { name: 'totalExpenses', title: 'Итого расходы' },
+  { name: 'totalIncomes', title: 'Итого доходы' },
+  { name: 'totalProfit', title: 'Итого прибыль' },
+];
+
+export const InitialVisibleColumns = new Set<keyof ObjectRecord>([
+  'date',
+  'rent',
+  'heat',
+  'renovation',
+  'electricity',
+  'security',
+  'totalProfit',
+]);
+
+const ObjectRecordsTable = observer(() => {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
   const [sortDescriptor, setSortDescriptor] = useState<
     | {
         column: any;
         direction: 'ascending' | 'descending';
       }
     | undefined
-  >(undefined);
+  >({
+    column: 'date',
+    direction: 'descending',
+  });
   const rowsPerPage = 9;
-  // TODO: replace mock data with real records
-  const pages = Math.ceil(mockObjectRecords.length / rowsPerPage);
+  const pages = Math.ceil(
+    (objectsStore.activeObject?.records || []).length / rowsPerPage,
+  );
   const [page, setPage] = useState(1);
   const [visibleColumns, setVisibleColumns] = useState(
-    columns.filter((column) => initialVisibleColumns.has(column.name)),
+    RecordColumns.filter((column) => InitialVisibleColumns.has(column.name)),
   );
 
-  const sortedRecords = sortRecords(mockObjectRecords, sortDescriptor);
+  const sortedRecords = sortRecords(
+    objectsStore.activeObject?.records || [],
+    sortDescriptor,
+  );
   const sortedPaginatedRecords = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
@@ -100,34 +109,36 @@ export default function ObjectRecordsTable({
   }
 
   function calculateCell(column: keyof ObjectRecord, item: ObjectRecord) {
+    const val = (field: keyof ObjectRecord) => item[field] ?? 0;
+
     switch (column) {
       case 'totalExpenses':
         return (
-          item['heat'] +
-          item['exploitation'] +
-          item['mop'] +
-          item['renovation'] +
-          item['tbo'] +
-          item['electricity'] +
-          item['earthRent'] +
-          item['security'] +
-          item['otherExpenses']
+          val('heat') +
+          val('exploitation') +
+          val('mop') +
+          val('renovation') +
+          val('tbo') +
+          val('electricity') +
+          val('earthRent') +
+          val('security') +
+          val('otherExpenses')
         );
       case 'totalIncomes':
-        return item['rent'] + item['otherIncomes'];
+        return val('rent') + val('otherIncomes');
       case 'totalProfit':
         return (
-          item['rent'] +
-          item['otherIncomes'] -
-          (item['heat'] +
-            item['exploitation'] +
-            item['mop'] +
-            item['renovation'] +
-            item['tbo'] +
-            item['electricity'] +
-            item['earthRent'] +
-            item['security'] +
-            item['otherExpenses'])
+          val('rent') +
+          val('otherIncomes') -
+          (val('heat') +
+            val('exploitation') +
+            val('mop') +
+            val('renovation') +
+            val('tbo') +
+            val('electricity') +
+            val('earthRent') +
+            val('security') +
+            val('otherExpenses'))
         );
       default:
         return item[column];
@@ -145,110 +156,126 @@ export default function ObjectRecordsTable({
   };
 
   return (
-    <Table
-      classNames={{
-        base: 'max-w-6xl',
-      }}
-      aria-label="records-table"
-      sortDescriptor={sortDescriptor}
-      onSortChange={setSortDescriptor}
-      selectionMode="single"
-      topContent={
-        (
-          <div className="flex w-full justify-end">
-            <Dropdown>
-              <DropdownTrigger>
-                <Button
-                  startContent={
-                    <Columns3Cog className="w-4 stroke-default-500" />
+    <>
+      <Table
+        classNames={{
+          base: 'max-w-6xl',
+        }}
+        aria-label="records-table"
+        sortDescriptor={sortDescriptor}
+        onSortChange={setSortDescriptor}
+        selectionMode="single"
+        topContent={
+          (
+            <div className="flex w-full justify-end gap-2">
+              <Dropdown>
+                <DropdownTrigger>
+                  <Button
+                    startContent={
+                      <Columns3Cog className="w-4 stroke-default-500" />
+                    }
+                    endContent={<ChevronDownIcon className="w-4" />}
+                    size="sm"
+                    variant="flat"
+                    className="font-medium"
+                  >
+                    Столбцы
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu
+                  disallowEmptySelection
+                  aria-label="Table Columns"
+                  closeOnSelect={false}
+                  selectedKeys={visibleColumns.map((column) => column.name)}
+                  selectionMode="multiple"
+                  onSelectionChange={(keys) =>
+                    setVisibleColumns(
+                      RecordColumns.filter((column) =>
+                        (keys as Set<keyof ObjectRecord>).has(column.name),
+                      ),
+                    )
                   }
-                  endContent={<ChevronDownIcon className="w-4" />}
-                  size="sm"
-                  variant="flat"
-                  className="font-medium"
                 >
-                  Столбцы
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={visibleColumns.map((column) => column.name)}
-                selectionMode="multiple"
-                onSelectionChange={(keys) =>
-                  setVisibleColumns(
-                    columns.filter((column) =>
-                      (keys as Set<keyof ObjectRecord>).has(column.name),
-                    ),
-                  )
-                }
+                  {RecordColumns.map(
+                    (column) =>
+                      (
+                        <DropdownItem key={column.name}>
+                          {column.title}
+                        </DropdownItem>
+                      ) as any,
+                  )}
+                </DropdownMenu>
+              </Dropdown>
+              <Button
+                onPress={onOpen}
+                startContent={<PlusIcon className="w-4" />}
+                color="primary"
+                size="sm"
               >
-                {columns.map(
-                  (column) =>
-                    (
-                      <DropdownItem key={column.name}>
-                        {column.title}
-                      </DropdownItem>
-                    ) as any,
-                )}
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        ) as ReactNode
-      }
-      bottomContent={
-        (
-          <div className="flex w-full justify-center">
-            <Pagination
-              isCompact
-              showControls
-              showShadow
-              color="secondary"
-              page={page}
-              total={pages}
-              onChange={(page) => setPage(page)}
-            />
-          </div>
-        ) as ReactNode
-      }
-    >
-      <TableHeader columns={visibleColumns}>
-        {(column) =>
-          (
-            <TableColumn key={column.name} allowsSorting={column.sortable}>
-              {column.title}
-            </TableColumn>
-          ) as any
+                Добавить запись
+              </Button>
+            </div>
+          ) as ReactNode
         }
-      </TableHeader>
-      <TableBody
-        emptyContent={'Пока нет записей'}
-        items={sortedPaginatedRecords}
+        bottomContent={
+          (
+            <div className="flex w-full justify-center">
+              <Pagination
+                isCompact
+                showControls
+                showShadow
+                color="secondary"
+                page={page}
+                total={pages}
+                onChange={(page) => setPage(page)}
+              />
+            </div>
+          ) as ReactNode
+        }
       >
-        {(item: ObjectRecord) =>
-          (
-            <TableRow key={item.id}>
-              {(columnKey) =>
-                (
-                  <TableCell>
-                    <p className="text-nowrap p-0.5 text-xs">
-                      {columnKey === 'date'
-                        ? formatDate(item[columnKey])
-                        : formatNumber(
-                            calculateCell(
-                              columnKey as keyof ObjectRecord,
-                              item,
-                            ) | 0,
-                          )}
-                    </p>
-                  </TableCell>
-                ) as any
-              }
-            </TableRow>
-          ) as any
-        }
-      </TableBody>
-    </Table>
+        <TableHeader columns={visibleColumns}>
+          {(column) =>
+            (
+              <TableColumn key={column.name} allowsSorting={true}>
+                {column.title}
+              </TableColumn>
+            ) as any
+          }
+        </TableHeader>
+        <TableBody
+          emptyContent={'Пока нет записей'}
+          items={sortedPaginatedRecords}
+        >
+          {(item: ObjectRecord) =>
+            (
+              <TableRow key={item.id}>
+                {(columnKey) =>
+                  (
+                    <TableCell>
+                      <p className="text-nowrap p-0.5 text-xs">
+                        {columnKey === 'date'
+                          ? formatDate(item[columnKey])
+                          : item[columnKey] == undefined &&
+                              !columnKey.toString().startsWith('total')
+                            ? '-'
+                            : formatNumber(
+                                calculateCell(
+                                  columnKey as keyof ObjectRecord,
+                                  item,
+                                ) | 0,
+                              )}
+                      </p>
+                    </TableCell>
+                  ) as any
+                }
+              </TableRow>
+            ) as any
+          }
+        </TableBody>
+      </Table>
+      {isOpen && <AddRecordModal isOpen={isOpen} onOpenChange={onOpenChange} />}
+    </>
   );
-}
+});
+
+export default ObjectRecordsTable;

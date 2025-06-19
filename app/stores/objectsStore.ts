@@ -29,12 +29,10 @@ class ObjectsStore {
   }
 
   setAllObjects = (objects: any[]) => {
-    // TODO: parse objects via zod
     this.allObjects = [...objects];
   };
 
   setActiveObject = (object: any) => {
-    // TODO: parse object via zod
     this.activeObject = object;
   };
   updateActiveObjectDataForSale = (newAttrs: Partial<DataForSale>) => {
@@ -47,7 +45,7 @@ class ObjectsStore {
   addActiveObjectRecord = (newRecord: ObjectRecord) => {
     if (!this.activeObject) return;
     if (!this.activeObject.records) this.activeObject.records = [];
-    this.activeObject.records.push(newRecord);
+    this.activeObject.records = [...this.activeObject.records, newRecord];
   };
   get activeObjectDataForSale() {
     if (!this.activeObject?.dataForSale) return;
