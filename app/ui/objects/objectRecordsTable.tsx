@@ -16,7 +16,12 @@ import {
   DropdownTrigger,
 } from '@heroui/dropdown';
 import { Button } from '@heroui/button';
-import { ChevronDownIcon, Columns3Cog, PlusIcon } from 'lucide-react';
+import {
+  ChevronDownIcon,
+  Columns3Cog,
+  PlusIcon,
+  TrashIcon,
+} from 'lucide-react';
 import { useDisclosure } from '@heroui/modal';
 import AddRecordModal from '@/app/ui/modals/addRecordModal';
 import { observer } from 'mobx-react-lite';
@@ -55,6 +60,7 @@ export const InitialVisibleColumns = new Set<keyof ObjectRecord>([
 
 const ObjectRecordsTable = observer(() => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [selectedRecords, setSelectedrecords] = useState();
 
   const [sortDescriptor, setSortDescriptor] = useState<
     | {
@@ -155,6 +161,11 @@ const ObjectRecordsTable = observer(() => {
     });
   };
 
+  const handleDeleteRecords = () => {
+    // TODO: delete request
+    objectsStore.deleteActiveObjectRecord(selectedRecords);
+  };
+
   return (
     <>
       <Table
@@ -162,12 +173,25 @@ const ObjectRecordsTable = observer(() => {
           base: 'max-w-6xl',
         }}
         aria-label="records-table"
+        color="danger"
         sortDescriptor={sortDescriptor}
         onSortChange={setSortDescriptor}
-        selectionMode="single"
+        selectionMode="multiple"
+        showSelectionCheckboxes={false}
+        onSelectionChange={(keys) => setSelectedrecords(keys)}
         topContent={
           (
             <div className="flex w-full justify-end gap-2">
+              {selectedRecords && (
+                <Button
+                  onPress={handleDeleteRecords}
+                  isIconOnly
+                  color="danger"
+                  size="sm"
+                >
+                  <TrashIcon className="w-4" />
+                </Button>
+              )}
               <Dropdown>
                 <DropdownTrigger>
                   <Button
@@ -233,14 +257,15 @@ const ObjectRecordsTable = observer(() => {
           ) as ReactNode
         }
       >
-        <TableHeader columns={visibleColumns}>
-          {(column) =>
-            (
-              <TableColumn key={column.name} allowsSorting={true}>
-                {column.title}
-              </TableColumn>
-            ) as any
-          }
+        <TableHeader>
+          {visibleColumns.map(
+            (column) =>
+              (
+                <TableColumn key={column.name} allowsSorting={true}>
+                  {column.title}
+                </TableColumn>
+              ) as any,
+          )}
         </TableHeader>
         <TableBody
           emptyContent={'Пока нет записей'}

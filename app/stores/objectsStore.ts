@@ -19,6 +19,7 @@ class ObjectsStore {
       activeObjectDataForSale: computed,
       updateActiveObjectDataForSale: action,
       addActiveObjectRecord: action,
+      deleteActiveObjectRecord: action,
       addObject: action,
       updateObjectById: action,
       deleteObjectById: action,
@@ -46,6 +47,12 @@ class ObjectsStore {
     if (!this.activeObject) return;
     if (!this.activeObject.records) this.activeObject.records = [];
     this.activeObject.records = [...this.activeObject.records, newRecord];
+  };
+  deleteActiveObjectRecord = (recordsId: Set<string>) => {
+    if (!this.activeObject?.records) return;
+    this.activeObject.records = this.activeObject.records.filter(
+      (record) => !recordsId.has(record.id),
+    );
   };
   get activeObjectDataForSale() {
     if (!this.activeObject?.dataForSale) return;
