@@ -33,9 +33,7 @@ const ObjectDetail = observer(() => {
         classNames={{ tab: 'text-sm font-medium', panel: 'p-0' }}
       >
         <Tab key="records" title="Записи по объекту">
-          <ObjectRecordsTable
-            records={objectsStore.activeObject.records || []}
-          />
+          <ObjectRecordsTable />
         </Tab>
         <Tab key="info" title="Информация">
           <div className="flex flex-col gap-4">

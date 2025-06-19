@@ -48,8 +48,8 @@ class ObjectsStore {
     if (!this.activeObject.records) this.activeObject.records = [];
     this.activeObject.records = [...this.activeObject.records, newRecord];
   };
-  deleteActiveObjectRecord = (recordsId: Set<string>) => {
-    if (!this.activeObject?.records) return;
+  deleteActiveObjectRecord = (recordsId: Set<string> | undefined) => {
+    if (!this.activeObject?.records || !recordsId) return;
     this.activeObject.records = this.activeObject.records.filter(
       (record) => !recordsId.has(record.id),
     );
@@ -90,7 +90,7 @@ class ObjectsStore {
 
     const totalProfitPerYear = mean(
       last12Months(this.activeObject.records).map(
-        (record) => record.totalProfit | 0,
+        (record) => record.totalProfit || 0,
       ),
     );
     const dataForSale: DataForSale = {
@@ -98,7 +98,7 @@ class ObjectsStore {
       priceForSale: this.activeObject.dataForSale.priceForSale,
       countOfMonth: this.activeObject.records.length,
       profitPerMonth: mean(
-        this.activeObject.records.map((record) => record.totalProfit | 0),
+        this.activeObject.records.map((record) => record.totalProfit || 0),
       ),
       totalProfit: totalProfitPerYear,
       payback5Year: totalProfitPerYear * 5,

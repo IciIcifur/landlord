@@ -26,8 +26,8 @@ export default function DataForSaleForm({
     setErrors(
       CheckFormFields(
         {
-          purchasePrice: purchasePrice | undefined,
-          priceForSale: priceForSale | undefined,
+          purchasePrice: purchasePrice || undefined,
+          priceForSale: priceForSale || undefined,
         },
         dataForSaleFormSchema,
       ),

@@ -74,7 +74,7 @@ export default async function ObjectPage({
   return (
     <>
       <ObjectLoader object={objectData} />
-      <ObjectDetail object={objectData} />
+      <ObjectDetail />
     </>
   );
 }

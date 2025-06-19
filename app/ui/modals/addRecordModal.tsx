@@ -130,7 +130,7 @@ export default function AddRecordModal({
                     ? ((
                         <NumberInput
                           key={column.name}
-                          value={newRecord[column.name]}
+                          value={newRecord[column.name as keyof EditableRecord]}
                           errorMessage={errors[column.name]}
                           onValueChange={(value) =>
                             dispatch({

@@ -1,5 +1,6 @@
 import { ObjectRecord } from '@/app/lib/utils/definitions';
 import {
+  SortDescriptor as TableSortDescriptor,
   Table,
   TableBody,
   TableCell,
@@ -58,64 +59,65 @@ export const InitialVisibleColumns = new Set<keyof ObjectRecord>([
   'totalProfit',
 ]);
 
+type SortDescriptor = {
+  column: keyof ObjectRecord;
+  direction: 'ascending' | 'descending';
+};
+
 const ObjectRecordsTable = observer(() => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [selectedRecords, setSelectedrecords] = useState();
+  const [selectedRecords, setSelectedRecords] = useState<Set<string>>(
+    new Set(),
+  );
 
-  const [sortDescriptor, setSortDescriptor] = useState<
-    | {
-        column: any;
-        direction: 'ascending' | 'descending';
-      }
-    | undefined
-  >({
+  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: 'date',
     direction: 'descending',
   });
   const rowsPerPage = 9;
-  const pages = Math.ceil(
-    (objectsStore.activeObject?.records || []).length / rowsPerPage,
-  );
+  const records = objectsStore.activeObject?.records || [];
+  const pages = Math.ceil(records.length / rowsPerPage);
   const [page, setPage] = useState(1);
   const [visibleColumns, setVisibleColumns] = useState(
     RecordColumns.filter((column) => InitialVisibleColumns.has(column.name)),
   );
 
-  const sortedRecords = sortRecords(
-    objectsStore.activeObject?.records || [],
-    sortDescriptor,
+  const sortedRecords = useMemo(
+    () => sortRecords(records, sortDescriptor),
+    [records, sortDescriptor],
   );
+
   const sortedPaginatedRecords = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
-
     return sortedRecords.slice(start, end);
   }, [page, sortedRecords]);
 
   function sortRecords(
     records: ObjectRecord[],
-    sortDescriptor: typeof sortDescriptor,
+    tempSortDescriptor: SortDescriptor,
   ): ObjectRecord[] {
-    if (!sortDescriptor) return records;
-    const { column, direction } = sortDescriptor;
+    if (!tempSortDescriptor) return records;
+    const { column, direction } = tempSortDescriptor;
     return [...records].sort((a, b) => {
-      const first = a[column];
-      const second = b[column];
-
       let cmp = 0;
       if (column === 'date') {
-        cmp =
-          new Date(first as string).getTime() -
-          new Date(second as string).getTime();
+        cmp = new Date(a.date).getTime() - new Date(b.date).getTime();
       } else {
+        const first = typeof a[column] === 'number' ? (a[column] as number) : 0;
+        const second =
+          typeof b[column] === 'number' ? (b[column] as number) : 0;
         cmp = first - second;
       }
       return direction === 'descending' ? -cmp : cmp;
     });
   }
 
-  function calculateCell(column: keyof ObjectRecord, item: ObjectRecord) {
-    const val = (field: keyof ObjectRecord) => item[field] ?? 0;
+  function calculateCell(
+    column: keyof Omit<ObjectRecord, 'id' | 'date'>,
+    item: ObjectRecord,
+  ): number {
+    const val = (field: keyof ObjectRecord) => (item[field] ?? 0) as number;
 
     switch (column) {
       case 'totalExpenses':
@@ -147,11 +149,13 @@ const ObjectRecordsTable = observer(() => {
             val('otherExpenses'))
         );
       default:
-        return item[column];
+        return val(column as keyof ObjectRecord);
     }
   }
+
   const formatNumber = (n: number = 0): string =>
     new Intl.NumberFormat('en-EN', { useGrouping: true }).format(n);
+
   const formatDate = (isoDate: string): string => {
     const date = new Date(isoDate);
     return date.toLocaleDateString('ru-RU', {
@@ -164,6 +168,7 @@ const ObjectRecordsTable = observer(() => {
   const handleDeleteRecords = () => {
     // TODO: delete request
     objectsStore.deleteActiveObjectRecord(selectedRecords);
+    setSelectedRecords(new Set());
   };
 
   return (
@@ -175,14 +180,20 @@ const ObjectRecordsTable = observer(() => {
         aria-label="records-table"
         color="danger"
         sortDescriptor={sortDescriptor}
-        onSortChange={setSortDescriptor}
+        onSortChange={(desc: TableSortDescriptor) => {
+          setSortDescriptor({
+            column: desc.column as keyof ObjectRecord,
+            direction: desc.direction as 'ascending' | 'descending',
+          });
+        }}
         selectionMode="multiple"
-        showSelectionCheckboxes={false}
-        onSelectionChange={(keys) => setSelectedrecords(keys)}
+        showSelectionCheckboxes={true}
+        selectedKeys={selectedRecords}
+        onSelectionChange={(keys) => setSelectedRecords(keys as Set<string>)}
         topContent={
           (
             <div className="flex w-full justify-end gap-2">
-              {selectedRecords && (
+              {selectedRecords.size > 0 && (
                 <Button
                   onPress={handleDeleteRecords}
                   isIconOnly
@@ -274,25 +285,33 @@ const ObjectRecordsTable = observer(() => {
           {(item: ObjectRecord) =>
             (
               <TableRow key={item.id}>
-                {(columnKey) =>
-                  (
+                {(columnKey) => {
+                  if (columnKey === 'id') return null;
+                  if (columnKey === 'date') {
+                    return (
+                      <TableCell>
+                        <p className="text-nowrap p-0.5 text-xs">
+                          {formatDate(item[columnKey])}
+                        </p>
+                      </TableCell>
+                    ) as any;
+                  }
+                  const value = columnKey.toString().startsWith('total')
+                    ? calculateCell(
+                        columnKey as keyof Omit<ObjectRecord, 'id' | 'date'>,
+                        item,
+                      )
+                    : (item[columnKey as keyof ObjectRecord] ?? '-');
+                  return (
                     <TableCell>
                       <p className="text-nowrap p-0.5 text-xs">
-                        {columnKey === 'date'
-                          ? formatDate(item[columnKey])
-                          : item[columnKey] == undefined &&
-                              !columnKey.toString().startsWith('total')
-                            ? '-'
-                            : formatNumber(
-                                calculateCell(
-                                  columnKey as keyof ObjectRecord,
-                                  item,
-                                ) | 0,
-                              )}
+                        {typeof value === 'number'
+                          ? formatNumber(value)
+                          : value}
                       </p>
                     </TableCell>
-                  ) as any
-                }
+                  );
+                }}
               </TableRow>
             ) as any
           }
