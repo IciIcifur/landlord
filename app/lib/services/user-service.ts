@@ -76,7 +76,7 @@ export async function createOrUpdateUser(userData: CreateUserData): Promise<Crea
     }
 }
 
-export async function deleteUser(userId: string): Promise<{ userId: string; message: string }> {
+export async function deleteUser(userId: string): Promise<{ message: string }> {
     await connectDB()
     if (!userId) {
         throw new UserServiceError("ID пользователя обязателен", 400, {id: "ID пользователя обязателен"})
