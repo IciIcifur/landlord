@@ -70,7 +70,7 @@ const ObjectDetail = observer(() => {
                               const url = window.URL.createObjectURL(blob)
                               const link = document.createElement("a")
                               link.href = url
-                              link.download = `${objectsStore.activeObject.name}_records.csv`
+                              link.download = `${objectsStore.activeObject.name}.csv`
                               document.body.appendChild(link)
                               link.click()
                               document.body.removeChild(link)

@@ -28,32 +28,36 @@ export async function GET(req: NextRequest, context: any) {
     }
 
     const records = await getRecordsByObjectId(objectId)
-
-    const csvContent = generateExcelCSV(records, object.name)
+    const csvContent = generateExcelCSV(records)
 
     if (returnBlob) {
       const base64Data = Buffer.from(csvContent, "utf-8").toString("base64")
       return NextResponse.json({
-        filename: `${object.name}_records.csv`,
+        filename: `${object.name}.csv`,
         data: base64Data,
         mimeType: "text/csv",
       })
     } else {
-      return new NextResponse(csvContent, {
+      const buffer = Buffer.from(csvContent, "utf-8")
+
+      return new NextResponse(buffer, {
         status: 200,
         headers: {
           "Content-Type": "text/csv; charset=utf-8",
-          "Content-Disposition": `attachment; filename="${object.name}_records.csv"`,
+          "Content-Disposition": `attachment; filename="${encodeURIComponent(object.name)}.csv"`,
           "Cache-Control": "no-cache",
         },
       })
     }
   } catch (error: any) {
+    console.error("Export error:", error)
     return errorResponse(error.message || "Ошибка при экспорте данных", 500)
   }
 }
 
-function generateExcelCSV(records: any[], objectName: string): string {
+function generateExcelCSV(records: any[]): string {
+  const BOM = "\uFEFF"
+
   const headers = [
     "Месяц",
     "Аренда",
@@ -120,12 +124,7 @@ function generateExcelCSV(records: any[], objectName: string): string {
     ]
   })
 
-  const BOM = "\uFEFF"
-
   let csvContent = BOM
-  csvContent += `Отчет по объекту: ${objectName}\n`
-  csvContent += `Дата создания: ${new Date().toLocaleDateString("ru-RU")}\n\n`
-
   csvContent += headers.join(";") + "\n"
 
   rows.forEach((row) => {
@@ -134,7 +133,6 @@ function generateExcelCSV(records: any[], objectName: string): string {
 
   if (rows.length > 0) {
     const totalRow = calculateSummaryRow(records)
-    csvContent += "\n"
     csvContent += "ИТОГО;" + totalRow.join(";") + "\n"
   }
 
