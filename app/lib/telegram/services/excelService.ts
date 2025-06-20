@@ -1,3 +1,4 @@
+import 'server-only'
 import { ObjectService } from '@/app/lib/telegram/services/objectService';
 import {
   generateExcelFile,
