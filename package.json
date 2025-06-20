@@ -31,7 +31,7 @@
     "@types/react-dom": "^19.1.6",
     "@types/stream-to-promise": "^2.2.4",
     "@types/tailwindcss": "^3.1.0",
-    "archiver": "^7.0.1",
+    "@types/archiver": "^6.0.3",
     "axios": "^1.10.0",
     "bcryptjs": "^3.0.2",
     "clsx": "^2.1.1",
@@ -59,7 +59,6 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
-    "@types/archiver": "^6.0.3",
     "@types/node": "^24.0.3",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.3",
