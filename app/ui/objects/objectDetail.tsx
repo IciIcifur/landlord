@@ -91,7 +91,7 @@ const ObjectDetail = observer(() => {
                       {objectsStore.activeObjectDataForSale &&
                         ((
                           <DataForSaleTable
-                            dataForSale={objectsStore.activeObjectDataForSale}
+                            dataForSale={objectsStore.activeObject.dataForSale}
                           />
                         ) as ReactNode)}
                       <DataForSaleForm
