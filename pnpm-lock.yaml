@@ -56,6 +56,9 @@ importers:
       '@heroui/theme':
         specifier: ^2.4.17
         version: 2.4.17(tailwindcss@3.4.17)
+      '@types/archiver':
+        specifier: ^6.0.3
+        version: 6.0.3
       '@types/node':
         specifier: ^24.0.3
         version: 24.0.3
@@ -147,9 +150,6 @@ importers:
       '@eslint/eslintrc':
         specifier: ^3.3.1
         version: 3.3.1
-      '@types/archiver':
-        specifier: ^6.0.3
-        version: 6.0.3
       '@types/stream-to-promise':
         specifier: ^2.2.4
         version: 2.2.4
