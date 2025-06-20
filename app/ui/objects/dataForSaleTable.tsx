@@ -1,23 +1,21 @@
 'use client';
 
 import { DataForSale } from '@/app/lib/utils/definitions';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from '@heroui/table';
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/table';
 import { PercentIcon, RussianRubleIcon } from 'lucide-react';
 
-export default function DataForSaleTable({
-  dataForSale,
-}: {
-  dataForSale: DataForSale;
+export default function DataForSaleTable({ dataForSale }: {
+  dataForSale: DataForSale | null | undefined;
 }) {
   const formatNumber = (n: number = 0): string =>
-    new Intl.NumberFormat('en-EN', { useGrouping: true }).format(n);
+    new Intl.NumberFormat('en-EN', {
+      useGrouping: true,
+      maximumFractionDigits: 0,
+    }).format(Math.round(n));
+
+  if (!dataForSale) {
+    return <div className="text-default-400">Нет данных для отображения</div>;
+  }
 
   return (
     <Table removeWrapper aria-label="data-for-sale-table">
@@ -65,7 +63,7 @@ export default function DataForSaleTable({
           </TableCell>
           <TableCell>
             <div className="flex w-full justify-between">
-              {dataForSale.percentPerYear}
+              {formatNumber(dataForSale.percentPerYear)}
               <PercentIcon className="h-full w-4 stroke-default-500" />
             </div>
           </TableCell>
