@@ -13,7 +13,12 @@ export default function FooterNavbar() {
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem>
-          <Button isIconOnly as={Link} variant="light" href="#">
+          <Button
+            isIconOnly
+            as={Link}
+            variant="light"
+            href="https://t.me/landlord_assistant_hse_bot"
+          >
             <BotMessageSquareIcon className="stroke-default-500" />
           </Button>
         </NavbarItem>
