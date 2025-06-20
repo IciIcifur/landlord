@@ -359,12 +359,11 @@ export class TelegramCommandHandler {
       message += `${index + 1}. *${obj.name}*\n`;
       message += `   📍 ${obj.address}\n`;
       if (obj.square) {
-        message += `   📐 ${obj.square} м²\n`;
+        message += `   🏠 ${obj.square} м²\n`;
       }
       if (obj.description) {
-        message += `   📝 ${obj.description}\n`;
+        message += `   📝 ${obj.description}\n\n`;
       }
-      message += `   🆔 \`${obj.id}\`\n\n`;
     });
 
     const keyboard: TelegramKeyboard = {
