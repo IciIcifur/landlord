@@ -5,7 +5,6 @@ import { BotMessageSquareIcon, GithubIcon } from 'lucide-react';
 import { Button } from '@heroui/button';
 
 export default function FooterNavbar() {
-  // TODO: add telegram link
   return (
     <Navbar isBordered className="relative bottom-0 gap-2">
       <NavbarContent justify="start">
@@ -13,7 +12,7 @@ export default function FooterNavbar() {
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem>
-          <Button isIconOnly as={Link} variant="light" href="#">
+          <Button isIconOnly as={Link} variant="light" href="https://t.me/landlord_assistant_hse_bot">
             <BotMessageSquareIcon className="stroke-default-500" />
           </Button>
         </NavbarItem>
