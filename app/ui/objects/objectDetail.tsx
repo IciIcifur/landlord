@@ -14,7 +14,7 @@ import { Tab, Tabs } from '@heroui/tabs';
 import userStore from '@/app/stores/userStore';
 import { UserRole } from '@/app/lib/utils/definitions';
 import ObjectRecordsTable from '@/app/ui/objects/objectRecordsTable';
-import { ExportObjectToExcel } from "@/app/lib/actions/clientApi"
+import { ExportObjectToExcel } from '@/app/lib/actions/clientApi';
 
 const ObjectDetail = observer(() => {
   return objectsStore.activeObject ? (
@@ -62,21 +62,24 @@ const ObjectDetail = observer(() => {
                         </h3>
                         <Button
                           onPress={async () => {
-                            if (!objectsStore.activeObject) return
+                            if (!objectsStore.activeObject) return;
 
                             try {
-                              const blob = await ExportObjectToExcel(objectsStore.activeObject.id, false)
+                              const blob = await ExportObjectToExcel(
+                                objectsStore.activeObject.id,
+                                false,
+                              );
 
-                              const url = window.URL.createObjectURL(blob)
-                              const link = document.createElement("a")
-                              link.href = url
-                              link.download = `${objectsStore.activeObject.name}.csv`
-                              document.body.appendChild(link)
-                              link.click()
-                              document.body.removeChild(link)
-                              window.URL.revokeObjectURL(url)
+                              const url = window.URL.createObjectURL(blob);
+                              const link = document.createElement('a');
+                              link.href = url;
+                              link.download = `${objectsStore.activeObject.name}.csv`;
+                              document.body.appendChild(link);
+                              link.click();
+                              document.body.removeChild(link);
+                              window.URL.revokeObjectURL(url);
                             } catch (error) {
-                              console.error("Ошибка при экспорте:", error)
+                              console.error('Ошибка при экспорте:', error);
                             }
                           }}
                           isIconOnly

@@ -1,4 +1,4 @@
-import 'server-only'
+import 'server-only';
 import { ObjectService } from '@/app/lib/telegram/services/objectService';
 import {
   generateExcelFile,
@@ -33,9 +33,7 @@ export class ExcelService {
         );
       }
 
-      const records = await this.objectService.getRecordsByObjectId(
-        objectId,
-      );
+      const records = await this.objectService.getRecordsByObjectId(objectId);
 
       if (records.length === 0) {
         throw new Error('Нет данных для формирования отчета');

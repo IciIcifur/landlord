@@ -74,9 +74,7 @@ export class ObjectService {
     }
   }
 
-  async getRecordsByObjectId(
-    objectId: string,
-  ): Promise<ObjectRecord[]> {
+  async getRecordsByObjectId(objectId: string): Promise<ObjectRecord[]> {
     try {
       return await getRecordsByObjectId_(objectId);
     } catch (error) {

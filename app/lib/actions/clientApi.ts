@@ -198,24 +198,27 @@ export async function UpdateDataForSale(
 }
 
 // ===== EXCEL EXPORT API =====
-export async function ExportObjectToExcel(objectId: string, returnBlob = false) {
-  const userId = await GetUserId()
-  const url = `${API_URL}/api/objects/${objectId}/export-excel${returnBlob ? "?returnBlob=true" : ""}`
+export async function ExportObjectToExcel(
+  objectId: string,
+  returnBlob = false,
+) {
+  const userId = await GetUserId();
+  const url = `${API_URL}/api/objects/${objectId}/export-excel${returnBlob ? '?returnBlob=true' : ''}`;
 
   const response = await fetch(url, {
-    method: "GET",
+    method: 'GET',
     headers: {
-      "x-user-id": userId,
+      'x-user-id': userId,
     },
-  })
+  });
 
   if (!response.ok) {
-    throw new Error("Ошибка при экспорте данных")
+    throw new Error('Ошибка при экспорте данных');
   }
 
   if (returnBlob) {
-    return response.json()
+    return response.json();
   } else {
-    return response.blob()
+    return response.blob();
   }
 }

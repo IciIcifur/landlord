@@ -4,32 +4,35 @@ export interface ExcelExportResult {
   mimeType: string;
 }
 
-export function generateExcelFile(records: any[], objectName: string): ExcelExportResult {
-  const BOM = "\uFEFF";
+export function generateExcelFile(
+  records: any[],
+  objectName: string,
+): ExcelExportResult {
+  const BOM = '\uFEFF';
 
   const headers = [
-    "Месяц",
-    "Аренда",
-    "Тепло",
-    "Эксплуатация",
-    "МОП",
-    "Капремонт",
-    "ТБО",
-    "Электричество",
-    "Аренда земли",
-    "Прочие расходы",
-    "Прочие доходы",
-    "Охрана",
-    "Итого расходы",
-    "Итого доходы",
-    "Итого прибыль",
+    'Месяц',
+    'Аренда',
+    'Тепло',
+    'Эксплуатация',
+    'МОП',
+    'Капремонт',
+    'ТБО',
+    'Электричество',
+    'Аренда земли',
+    'Прочие расходы',
+    'Прочие доходы',
+    'Охрана',
+    'Итого расходы',
+    'Итого доходы',
+    'Итого прибыль',
   ];
 
   const formatDate = (isoDate: string): string => {
     const date = new Date(isoDate);
-    return date.toLocaleDateString("ru-RU", {
-      month: "long",
-      year: "numeric",
+    return date.toLocaleDateString('ru-RU', {
+      month: 'long',
+      year: 'numeric',
     });
   };
 
@@ -79,7 +82,7 @@ export function generateExcelFile(records: any[], objectName: string): ExcelExpo
         otherExpenses: 0,
         otherIncomes: 0,
         security: 0,
-      }
+      },
     );
 
     const totalExpenses =
@@ -137,22 +140,22 @@ export function generateExcelFile(records: any[], objectName: string): ExcelExpo
   });
 
   let csvContent = BOM;
-  csvContent += headers.join(";") + "\n";
+  csvContent += headers.join(';') + '\n';
 
   rows.forEach((row) => {
-    csvContent += row.join(";") + "\n";
+    csvContent += row.join(';') + '\n';
   });
 
   if (rows.length > 0) {
     const totalRow = calculateSummaryRow(records);
-    csvContent += "ИТОГО;" + totalRow.join(";") + "\n";
+    csvContent += 'ИТОГО;' + totalRow.join(';') + '\n';
   }
 
-  const buffer = Buffer.from(csvContent, "utf8");
+  const buffer = Buffer.from(csvContent, 'utf8');
 
   return {
     buffer,
-    filename: `${objectName || "export"}.csv`,
-    mimeType: "text/csv; charset=utf-8",
+    filename: `${objectName || 'export'}.csv`,
+    mimeType: 'text/csv; charset=utf-8',
   };
 }

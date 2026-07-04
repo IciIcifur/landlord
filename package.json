@@ -10,6 +10,7 @@
     "check": "tsc --noEmit"
   },
   "dependencies": {
+    "@heroui/alert": "^2.2.32",
     "@heroui/autocomplete": "^2.3.23",
     "@heroui/button": "^2.2.22",
     "@heroui/card": "^2.2.21",
@@ -26,12 +27,12 @@
     "@heroui/table": "^2.2.21",
     "@heroui/tabs": "^2.2.19",
     "@heroui/theme": "^2.4.17",
+    "@types/archiver": "^6.0.3",
     "@types/node": "^24.0.3",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@types/stream-to-promise": "^2.2.4",
     "@types/tailwindcss": "^3.1.0",
-    "@types/archiver": "^6.0.3",
     "archiver": "^7.0.1",
     "axios": "^1.10.0",
     "bcryptjs": "^3.0.2",

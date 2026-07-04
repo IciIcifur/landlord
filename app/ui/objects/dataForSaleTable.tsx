@@ -1,10 +1,19 @@
 'use client';
 
 import { DataForSale } from '@/app/lib/utils/definitions';
-import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from '@heroui/table';
 import { PercentIcon, RussianRubleIcon } from 'lucide-react';
 
-export default function DataForSaleTable({ dataForSale }: {
+export default function DataForSaleTable({
+  dataForSale,
+}: {
   dataForSale: DataForSale | null | undefined;
 }) {
   const formatNumber = (n: number = 0): string =>

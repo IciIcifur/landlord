@@ -107,14 +107,22 @@ export async function deleteUser(userId: string): Promise<{ message: string }> {
     });
   }
   try {
-    const userToDelete = await UserModel.findById(userId).select('role').lean() as any;
+    const userToDelete = (await UserModel.findById(userId)
+      .select('role')
+      .lean()) as any;
     if (!userToDelete) {
-      throw new UserServiceError('Пользователь не найден', 404, { id: 'Пользователь не найден' });
+      throw new UserServiceError('Пользователь не найден', 404, {
+        id: 'Пользователь не найден',
+      });
     }
     if (userToDelete.role === UserRole.ADMIN) {
-      throw new UserServiceError('Нельзя удалить пользователя с ролью администратора', 403, {
-        role: 'Нельзя удалить пользователя с ролью администратора',
-      });
+      throw new UserServiceError(
+        'Нельзя удалить пользователя с ролью администратора',
+        403,
+        {
+          role: 'Нельзя удалить пользователя с ролью администратора',
+        },
+      );
     }
     const deletedUser = await UserModel.findByIdAndDelete(userId);
     if (!deletedUser) {
