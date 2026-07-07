@@ -1,6 +1,4 @@
 <div>
-<br/>
-
 <h1>LandLord</h1>
 
 <p>
@@ -11,7 +9,6 @@ Built as a practical portfolio project focused on real business use case.
 <a href="https://prettywiki.vercel.app/">
   <img alt="Live Demo" src="https://img.shields.io/badge/Live%20Demo-LandLord-070708?style=for-the-badge&logo=vercel&logoColor=white" />
 </a>
-
 <hr/>
 
 <p>
@@ -43,7 +40,7 @@ Built as a practical portfolio project focused on real business use case.
 </div>
 
 
-## Deployment and demo
+## 🚀 Deployment and Demo
 
 **Live app**: https://landlord-3zhn.onrender.com/
 
@@ -76,7 +73,7 @@ Main development should be done in branches from `develop`, which should stay st
 
 ---
 
-## The Idea
+## 💡 The Idea
 
 The app aims to manage income and expenses for commercial real estate objects rented out by a management company.
 
@@ -86,7 +83,7 @@ Then the system performs calculations to support a decision about possible sale 
 
 The buyer can view all information for objects they are planning to buy and export data for different periods.
 
-### Main functionality
+### Main Functionality
 
 - User authorizes by email; **superuser** (administrator) can create accounts for approved emails;
 - CRUD operations for objects, data fields, and records
@@ -98,13 +95,13 @@ The buyer can view all information for objects they are planning to buy and expo
 - Client (tenant)
 - Administrator (landlord - **superuser**)
 
-#### Client capabilities
+#### Client Capabilities
 
 - Sign in with email and password
 - View information for objects they have access to (income and expenses only)
 - Export information for accessible objects in XLSX format for different periods (from 1 month to full object history)
 
-#### Administrator capabilities
+#### Administrator Capabilities
 
 - Sign in with email and password
 - View information for all objects
@@ -116,7 +113,7 @@ The buyer can view all information for objects they are planning to buy and expo
 
 ---
 
-## Requirements
+## 🎯 Requirements
 
 **Business expects:**
 - A web interface where a manager can add, view, edit, and delete object data.  
@@ -135,7 +132,7 @@ Also can create new objects and delete old ones.
 
 ---
 
-## App Architecture
+## ⚙️ App Architecture
 
 ### Routes
 
@@ -167,7 +164,7 @@ In `/app/lib` we keep common utilities:
 
 `/app/ui` is the directory for all **client-side** components.
 
-## Screenshots
+## 📸 Screenshots
 
 <p>
   <img src="./docs/images/screenshot_1.png" alt="Main page" width="49%" />
