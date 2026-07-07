@@ -173,7 +173,7 @@ In `/app/lib` we keep common utilities:
   <img src="./docs/images/screenshot_4.png" alt="Users Management" width="49%" />
 </p>
 
-## 👥Team
+## 👥 Team
 LandLord is developed by a student team as an educational lab.
 - **Olesya Dobrovolskaya** — Frontend Developer  
   GitHub: [@IciIcifur](https://github.com/IciIcifur)
