@@ -6,7 +6,7 @@ A full-stack Next.js app for commercial real estate cash-flow accounting: track 
 Built as a practical portfolio project focused on real business use case.
 </p>
 
-<a href="https://prettywiki.vercel.app/">
+<a href="https://landlord-3zhn.onrender.com/">
   <img alt="Live Demo" src="https://img.shields.io/badge/Live%20Demo-LandLord-070708?style=for-the-badge&logo=vercel&logoColor=white" />
 </a>
 <hr/>
@@ -39,7 +39,6 @@ Built as a practical portfolio project focused on real business use case.
 </p>
 </div>
 
-
 ## 🚀 Deployment and Demo
 
 **Live app**: https://landlord-3zhn.onrender.com/
@@ -65,7 +64,6 @@ pnpm build
 pnpm start
 ```
 
-
 #### Deploy & Branches
 
 Re-deploy on Render happens on each update of the `master` branch.  
@@ -78,6 +76,7 @@ Main development should be done in branches from `develop`, which should stay st
 The app aims to manage income and expenses for commercial real estate objects rented out by a management company.
 
 ### Use Scenario
+
 The company receives information about expenses and income and puts this data into the system.  
 Then the system performs calculations to support a decision about possible sale of an object to a buyer.
 
@@ -116,13 +115,14 @@ The buyer can view all information for objects they are planning to buy and expo
 ## 🎯 Requirements
 
 **Business expects:**
+
 - A web interface where a manager can add, view, edit, and delete object data.  
-Through the same web interface, a client may view object data and export data for custom periods with calculations in XLSX format.
+  Through the same web interface, a client may view object data and export data for custom periods with calculations in XLSX format.
 
 - The interface should support both desktop and mobile devices.
 
 - An admin panel where the **superuser** can manage user access rights and change object accounting structure (add new fields, disable current ones).  
-Also can create new objects and delete old ones.
+  Also can create new objects and delete old ones.
 
 - A Telegram bot through which users can receive an XLSX table with object calculations for a custom period.
 
@@ -174,7 +174,9 @@ In `/app/lib` we keep common utilities:
 </p>
 
 ## 👥 Team
+
 LandLord is developed by a student team as an educational lab.
+
 - **Olesya Dobrovolskaya** — Frontend Developer  
   GitHub: [@IciIcifur](https://github.com/IciIcifur)
 
